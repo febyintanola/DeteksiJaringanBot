@@ -1,0 +1,28 @@
+Plan draft for Canopy clustering, co-thread edges, exports, UX, and notebook.
+
+Progress notes (2025-11-16):
+- Raw TikTok comments now persisted to `data/comments.json` (+ timestamped snapshots).
+- Parser aggregates mentions, replies, co-thread participation, and user-level summaries.
+- Graph builder combines mention, reply, co-thread, and content similarity layers with tunable weights (α/β/δ/γ) and penalises cross-canopy edges.
+- Canopy module builds TF-IDF + TruncatedSVD embeddings, optional hnswlib ANN, and annotates nodes/metrics.
+- UI shows canopy assignment, updated timing breakdown, and canopy summary.
+- Backend exposes `/api/run_async` + `/api/status/{job_id}` with progress tracking and reusable pipeline helper.
+
+Canopy clustering next steps:
+- Cache fitted TF-IDF/SVD artifacts per video or corpus size to avoid refitting on repeated runs.
+- Persist canopy embeddings/metadata for offline analysis and export (alongside `comments.json`).
+- Tune ANN parameters (ef, M) and add adaptive k-query per dataset size.
+- Experiment with alternative similarity cutoffs / adaptive T1,T2 based on vector statistics.
+- Explore using canopy-majority constraint when cutting MST (e.g., forbid splits that break dominant canopy unless weight > threshold).
+
+Co-thread edges addition:
+- ✅ Co-thread weights wired via parser + graph builder; consider visual encoding in frontend (edge dash/colour) as polish.
+
+Exports:
+- Provide backend endpoints to stream CSV and JSON payloads with nodes, edges, canopy labels, embeddings, and suspicion scores; ensure pagination for large exports.
+
+Progress UX:
+- Backend stage events now available via `/api/status/{job_id}`; next: integrate frontend progress bar (polling/SSE) and richer error summaries.
+
+Notebook documentation:
+- Create `notebooks/mst_canopy_demo.ipynb` capturing data prep, MST clustering, Canopy overlay, and interpretation for thesis appendix.
