@@ -43,7 +43,8 @@ function renderGraph(nodes, edges, clusters, suspicious, suspiciousDetails) {
       const topPeers = (det.top_edges || []).map(e => `${e.peer_label} (${e.weight.toFixed(3)})`).join(', ') || '-';
       reason = `Skor: ${det.score.toFixed(3)} | Avg cluster weight: ${det.cluster_avg_weight.toFixed(3)} | Degree: ${det.degree} | Koneksi utama: ${topPeers}`;
     }
-    alert(`Akun: ${n.label}\nID: ${n.id}\nCluster: ${cid}\n${canopyLabel}\nStatus: ${suspicious.includes(n.id) ? 'Terduga bot' : 'Tidak terduga'}\nAktivitas: ${activity}\n${reason}`);
+    const snippet = n.text_sample ? `\nContoh komentar:\n\"${(n.text_sample || '').substring(0, 240)}\"` : '';
+    alert(`Akun: ${n.label}\nID: ${n.id}\nCluster: ${cid}\n${canopyLabel}\nStatus: ${suspicious.includes(n.id) ? 'Terduga bot' : 'Tidak terduga'}\nAktivitas: ${activity}\n${reason}${snippet}`);
   });
 }
 
@@ -72,29 +73,51 @@ function renderTable(clusters, suspicious, nodes, suspiciousDetails, canopies) {
   const nameMap = Object.fromEntries(nodes.map(n => [n.id, n.label]));
   const nodeMap = Object.fromEntries(nodes.map(n => [n.id, n]));
   const detailOf = Object.fromEntries((suspiciousDetails || []).map(d => [d.user_id, d]));
+
+  // Global non-suspicious group
+  const allMembers = Object.values(clusters).flat();
+  const nonGlobal = allMembers.filter(u => !suspicious.includes(u));
+  const nonUnique = Array.from(new Set(nonGlobal));
+
   const parts = [];
+
+  parts.push(`
+    <div class="card">
+      <h3>Tidak Terduga (Semua Cluster)</h3>
+      <div>${nonUnique.length} akun</div>
+      <div>${nonUnique.map(u => nameMap[u] || u).slice(0, 50).join(', ') || '-'}</div>
+      ${nonUnique.length > 50 ? `<div>+${nonUnique.length - 50} lainnya</div>` : ''}
+    </div>
+  `);
+
+  // Suspicious per-cluster with reasons and comment snippet
   Object.entries(clusters).forEach(([cid, members]) => {
     const sus = members.filter(m => suspicious.includes(m));
-    const non = members.filter(m => !suspicious.includes(m));
+    if (sus.length === 0) return;
     const susList = sus.map(u => {
       const det = detailOf[u];
       const nodeInfo = nodeMap[u] || {};
-      if (!det) {
-        return `<li>${nameMap[u] || u} — komentar ${nodeInfo.comment_count ?? 0}, reply ${nodeInfo.reply_count ?? 0}, canopy ${nodeInfo.canopy ?? '-'}</li>`;
-      }
-      const topPeers = (det.top_edges || []).map(e => `${e.peer_label} (${e.weight.toFixed(2)})`).join(', ') || '-';
-      return `<li><b>${nameMap[u] || u}</b> — skor ${det.score.toFixed(3)}, avg w ${det.cluster_avg_weight.toFixed(3)}, degree ${det.degree}, strength ${det.strength.toFixed(3)}, komentar ${nodeInfo.comment_count ?? 0}, reply ${nodeInfo.reply_count ?? 0}, canopy ${nodeInfo.canopy ?? '-'}<br/>Koneksi utama: ${topPeers}</li>`;
+      const topPeers = det && (det.top_edges || []).map(e => `${e.peer_label} (${e.weight.toFixed(2)})`).join(', ') || '-';
+      const alasan = det
+        ? `Skor tinggi (${det.score.toFixed(3)}), rata-rata bobot cluster ${det.cluster_avg_weight.toFixed(3)}, degree ${det.degree}, koneksi utama: ${topPeers}`
+        : 'Pola koneksi internal tinggi.';
+      const snippet = nodeInfo.text_sample ? nodeInfo.text_sample.replace(/</g,'&lt;') : '';
+      return `
+        <li>
+          <b>${nameMap[u] || u}</b>
+          <div>Alasan: ${alasan}</div>
+          ${snippet ? `<div>Kutipan komentar: “${snippet}”</div>` : ''}
+        </li>`;
     }).join('') || '<li>-</li>';
+
     parts.push(`
       <div class="card">
-        <h3>Cluster ${cid}</h3>
-        <div><b>Terduga bot</b> (${sus.length}):
-          <ul>${susList}</ul>
-        </div>
-        <div><b>Tidak terduga</b> (${non.length}): ${non.map(u => nameMap[u]).join(', ') || '-'}</div>
+        <h3>Cluster ${cid} — Terduga (${sus.length})</h3>
+        <ul>${susList}</ul>
       </div>
     `);
   });
+
   const canopyParts = Object.entries(canopies || {}).map(([canopyId, members]) => {
     return `<li><b>${canopyId}</b> — ${members.length} akun</li>`;
   }).join('');
@@ -112,16 +135,8 @@ form.addEventListener('submit', async (e) => {
 
   const payload = {
     url: document.getElementById('url').value,
-    max_comments: Number(document.getElementById('max_comments').value),
-    alpha_mention: Number(document.getElementById('alpha').value),
-    beta_reply: Number(document.getElementById('beta').value),
-    gamma_content: Number(document.getElementById('gamma').value),
-    delta_thread: Number(document.getElementById('delta').value) || 0,
-    k_neighbors: Number(document.getElementById('k').value),
-    canopy_t1: Number(document.getElementById('t1').value),
-    canopy_t2: Number(document.getElementById('t2').value),
-    use_ann: true,
-    use_mst_overlay: document.getElementById('mst').checked,
+    max_comments: Number(document.getElementById('max_comments')?.value || 200),
+    // sisanya pakai default backend
   };
 
   try {
@@ -143,23 +158,10 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
-// Tour edukatif MST & Canopy
-const tourBtn = document.getElementById('tour');
-if (tourBtn) {
-  tourBtn.addEventListener('click', () => {
-    const driver = window.driver.js.driver({
-      showProgress: true,
-      steps: [
-        { element: '#url', popover: { title: 'Input URL', description: 'Masukkan URL video TikTok yang ingin dianalisis.' } },
-        { element: '#alpha', popover: { title: 'α (mention)', description: 'Bobot pengaruh relasi mention antar akun.' } },
-        { element: '#beta', popover: { title: 'β (reply)', description: 'Bobot interaksi balas-membalas untuk edge reply.' } },
-        { element: '#gamma', popover: { title: 'γ (konten)', description: 'Bobot kesamaan konten (v1: token overlap, nanti TF‑IDF/embedding).' } },
-        { element: '#delta', popover: { title: 'δ (thread)', description: 'Bobot co-thread untuk akun yang aktif di thread yang sama.' } },
-        { element: '#t1', popover: { title: 'Canopy T1/T2', description: 'Pre-clustering untuk mempercepat—T1 longgar, T2 ketat (implementasi bertahap).' } },
-        { element: '#graph', popover: { title: 'Graf & MST', description: 'Graf akun dengan cluster berwarna. MST overlay menyorot backbone (minimum spanning tree).' } },
-        { element: '#table', popover: { title: 'Ringkasan Hasil', description: 'Daftar akun terduga bot per cluster berdasarkan skor komposit.' } },
-      ]
-    });
-    driver.drive();
-  });
-}
+// Tip ringan: jelaskan UI tanpa tour library
+window.addEventListener('DOMContentLoaded', () => {
+  const helper = document.querySelector('.helper');
+  if (helper) {
+    helper.innerHTML = 'Tempel URL video TikTok di atas. Setelah Analisis, panel kiri menampilkan graf interaksi, dan panel kanan merangkum cluster serta akun terduga.';
+  }
+});
