@@ -4,8 +4,12 @@ import networkx as nx
 
 def mst_cluster(nodes: List[Dict], edges: List[Dict], use_overlay: bool = True) -> Dict[str, List[str]]:
     """
-    Build MST per connected component and cut weak links to form clusters.
-    For v1, we cut edges below median MST weight per component.
+    Build MST per connected component with Kruskal's algorithm and cut weak
+    links to form clusters.
+
+    The implementation keeps only the most representative backbone edges
+    (minimum-distance / maximum-similarity), then removes low-similarity edges
+    on that backbone using the median similarity in each component.
 
     Returns mapping cluster_id -> list of user_ids.
     """
@@ -27,8 +31,8 @@ def mst_cluster(nodes: List[Dict], edges: List[Dict], use_overlay: bool = True) 
             clusters[str(cid)] = list(sub.nodes())
             cid += 1
             continue
-        # Minimum spanning tree using distance
-        T = nx.minimum_spanning_tree(sub, weight="distance")
+        # Minimum spanning tree using Kruskal over distance.
+        T = nx.minimum_spanning_tree(sub, weight="distance", algorithm="kruskal")
         # derive cut threshold: median of similarity weights on MST
         weights = [sub[u][v]["weight"] for u, v in T.edges()]
         if not weights:

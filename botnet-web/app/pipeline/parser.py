@@ -7,6 +7,7 @@ from collections import defaultdict
 from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
 
 MENTION_RE = re.compile(r"@([A-Za-z0-9_\.]+)")
+_NEW_ACCOUNT_KEYWORDS = ("new", "baru", "recent", "fresh")
 
 
 def _extract_parent_id(comment: Dict[str, Any], raw: Dict[str, Any]) -> Optional[str]:
@@ -47,9 +48,41 @@ def _ensure_summary(summary: Dict[str, Any], username: str) -> Dict[str, Any]:
     summary.setdefault("total_likes", 0)
     summary.setdefault("first_timestamp", None)
     summary.setdefault("last_timestamp", None)
+    summary.setdefault("timestamps", [])
     summary.setdefault("threads", set())
     summary.setdefault("_texts", [])
+    summary.setdefault("new_account_signal", None)
+    summary.setdefault("profile_metadata_available", False)
     return summary
+
+
+def _flatten_profile_strings(value: Any) -> List[str]:
+    if value in (None, "", [], {}, ()):
+        return []
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, dict):
+        flattened: List[str] = []
+        for inner in value.values():
+            flattened.extend(_flatten_profile_strings(inner))
+        return flattened
+    if isinstance(value, (list, tuple, set)):
+        flattened = []
+        for inner in value:
+            flattened.extend(_flatten_profile_strings(inner))
+        return flattened
+    return [str(value)]
+
+
+def _extract_new_account_signal(raw_user: Dict[str, Any]) -> Tuple[Optional[float], bool]:
+    profile_strings: List[str] = []
+    for field in ("account_labels", "user_tags", "type_label"):
+        profile_strings.extend(_flatten_profile_strings(raw_user.get(field)))
+    if not profile_strings:
+        return None, False
+    joined = " ".join(profile_strings).lower()
+    is_new = any(keyword in joined for keyword in _NEW_ACCOUNT_KEYWORDS)
+    return (1.0 if is_new else 0.0), True
 
 
 def parse_comments(comments: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -71,11 +104,20 @@ def parse_comments(comments: List[Dict[str, Any]]) -> Dict[str, Any]:
         summary["_texts"].append(text)
         timestamp = comment.get("timestamp")
         if timestamp is not None:
+            summary["timestamps"].append(timestamp)
             if summary["first_timestamp"] is None or timestamp < summary["first_timestamp"]:
                 summary["first_timestamp"] = timestamp
             if summary["last_timestamp"] is None or timestamp > summary["last_timestamp"]:
                 summary["last_timestamp"] = timestamp
         raw = comment.get("raw") or {}
+        raw_user = raw.get("user") or {}
+        new_account_signal, has_profile_metadata = _extract_new_account_signal(raw_user)
+        if has_profile_metadata:
+            summary["profile_metadata_available"] = True
+        if new_account_signal is not None:
+            current_signal = summary.get("new_account_signal")
+            if current_signal is None or new_account_signal > float(current_signal):
+                summary["new_account_signal"] = new_account_signal
         parent_id = _extract_parent_id(comment, raw)
         comment_id = comment.get("comment_id") or raw.get("cid")
         comment_id = str(comment_id) if comment_id else None
@@ -170,6 +212,13 @@ def parse_comments(comments: List[Dict[str, Any]]) -> Dict[str, Any]:
             summary["thread_count"] = len(normalized_threads)
         else:
             summary["thread_count"] = len(threads_set)
+        timestamps = summary.get("timestamps", [])
+        if isinstance(timestamps, list):
+            timestamps.sort()
+        if len(timestamps) >= 2:
+            summary["activity_span_sec"] = float(max(0, timestamps[-1] - timestamps[0]))
+        else:
+            summary["activity_span_sec"] = 0.0
         summary["avg_likes"] = (summary["total_likes"] / summary["comment_count"]) if summary["comment_count"] else 0.0
 
     return {

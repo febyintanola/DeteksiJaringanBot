@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, HttpUrl
 from loguru import logger
 
-from .pipeline.tiktok_client import fetch_comments
+from .pipeline.tiktok_client import fetch_comments, TikTokFetchError
 from .pipeline.parser import parse_comments
 from .pipeline.canopy import build_canopies, CanopyArtifacts
 from .pipeline.graph_builder import build_graph
@@ -220,6 +220,9 @@ async def _execute_pipeline(params: RunParams, progress_cb: Optional[AsyncProgre
     t_fetch_start = perf_counter()
     try:
         comments = await fetch_comments(video_url, params.max_comments, ms_token=ms_token)
+    except TikTokFetchError:
+        logger.exception("Fetch comments blocked by TikTok anti-bot")
+        raise
     except Exception as exc:
         logger.exception("Fetch comments failed")
         raise RuntimeError(f"Failed to fetch comments: {exc}") from exc
@@ -278,6 +281,7 @@ async def _execute_pipeline(params: RunParams, progress_cb: Optional[AsyncProgre
         edges,
         clusters,
         canopy_assignments=canopy_artifacts.assignments,
+        parsed=parsed,
     )
     t_score = perf_counter() - t_score_start
 
@@ -360,6 +364,8 @@ async def run_pipeline(params: RunParams):
         return await _execute_pipeline(params)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except TikTokFetchError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 

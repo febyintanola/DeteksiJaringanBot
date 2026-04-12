@@ -41,7 +41,8 @@ function renderGraph(nodes, edges, clusters, suspicious, suspiciousDetails) {
     const canopyLabel = n.canopy ? `Canopy: ${n.canopy}` : 'Canopy: -';
     if (det) {
       const topPeers = (det.top_edges || []).map(e => `${e.peer_label} (${e.weight.toFixed(3)})`).join(', ') || '-';
-      reason = `Skor: ${det.score.toFixed(3)} | Avg cluster weight: ${det.cluster_avg_weight.toFixed(3)} | Degree: ${det.degree} | Koneksi utama: ${topPeers}`;
+      const reasons = (det.reasons || []).join(', ') || 'indikasi koordinasi cluster';
+      reason = `Skor: ${det.score.toFixed(3)} | Kepadatan: ${det.cluster_density?.toFixed?.(3) ?? '-'} | Repetisi konten: ${det.content_repetition?.toFixed?.(3) ?? '-'} | Burst: ${det.temporal_burst?.toFixed?.(3) ?? '-'} | Frekuensi tinggi: ${det.high_frequency?.toFixed?.(3) ?? '-'} | Alasan utama: ${reasons} | Koneksi utama: ${topPeers}`;
     }
     const snippet = n.text_sample ? `\nContoh komentar:\n\"${(n.text_sample || '').substring(0, 240)}\"` : '';
     alert(`Akun: ${n.label}\nID: ${n.id}\nCluster: ${cid}\n${canopyLabel}\nStatus: ${suspicious.includes(n.id) ? 'Terduga bot' : 'Tidak terduga'}\nAktivitas: ${activity}\n${reason}${snippet}`);
@@ -55,9 +56,20 @@ function renderMetrics(metrics, timings) {
   const canopyEdgeRatio = metrics?.intra_canopy_edge_ratio != null
     ? ` | <b>Intra-canopy edge ratio</b>: ${metrics.intra_canopy_edge_ratio.toFixed(3)}`
     : '';
+  const scoreSummary = `
+      <b>Suspicious clusters</b>: ${metrics.num_suspicious_clusters ?? '-'} |
+      <b>Suspicious users</b>: ${metrics.num_suspicious_users ?? '-'} |
+      <b>Cutoff</b>: ${metrics.suspicious_score_cutoff?.toFixed?.(3) ?? '-'}
+      <br/>
+      <b>Avg cluster density</b>: ${metrics.avg_cluster_density?.toFixed?.(3) ?? '-'} |
+      <b>Avg content repetition</b>: ${metrics.avg_content_repetition?.toFixed?.(3) ?? '-'} |
+      <b>Avg temporal burst</b>: ${metrics.avg_temporal_burst?.toFixed?.(3) ?? '-'} |
+      <b>Avg high frequency</b>: ${metrics.avg_high_frequency?.toFixed?.(3) ?? '-'} |
+      <b>Account-age coverage</b>: ${metrics.account_age_coverage?.toFixed?.(3) ?? '-'}
+  `;
   metricsDiv.innerHTML = `
     <div class="card">
-      <b>Modularity</b>: ${metrics.modularity?.toFixed(4) ?? '-'} | 
+      <b>Modularity</b>: ${metrics.modularity?.toFixed(4) ?? '-'} |
       <b>Conductance (mean)</b>: ${metrics.conductance_mean?.toFixed(4) ?? '-'}
       <br/>
       <b>Nodes</b>: ${metrics.num_nodes ?? '-'} | <b>Edges</b>: ${metrics.num_edges ?? '-'} | <b>Clusters</b>: ${metrics.num_clusters ?? '-'} | <b>Components</b>: ${metrics.num_components ?? '-'}${canopyMetrics}${canopyEdgeRatio}
@@ -65,7 +77,10 @@ function renderMetrics(metrics, timings) {
       <b>Avg degree</b>: ${metrics.avg_degree?.toFixed(2) ?? '-'} | <b>Density</b>: ${metrics.density?.toFixed(4) ?? '-'}
     </div>
     <div class="card">
-      <b>Timings</b> — Fetch: ${timings?.fetch_sec?.toFixed?.(3) ?? '-'} s, Parse: ${timings?.parse_sec?.toFixed?.(3) ?? '-'} s, Canopy: ${timings?.canopy_sec?.toFixed?.(3) ?? '-'} s, Build: ${timings?.build_sec?.toFixed?.(3) ?? '-'} s, MST: ${timings?.cluster_sec?.toFixed?.(3) ?? '-'} s, Score: ${timings?.score_sec?.toFixed?.(3) ?? '-'} s, Total: ${timings?.total_sec?.toFixed?.(3) ?? '-'} s
+      ${scoreSummary}
+    </div>
+    <div class="card">
+      <b>Timings</b> - Fetch: ${timings?.fetch_sec?.toFixed?.(3) ?? '-'} s, Parse: ${timings?.parse_sec?.toFixed?.(3) ?? '-'} s, Canopy: ${timings?.canopy_sec?.toFixed?.(3) ?? '-'} s, Build: ${timings?.build_sec?.toFixed?.(3) ?? '-'} s, MST: ${timings?.cluster_sec?.toFixed?.(3) ?? '-'} s, Score: ${timings?.score_sec?.toFixed?.(3) ?? '-'} s, Total: ${timings?.total_sec?.toFixed?.(3) ?? '-'} s
     </div>`;
 }
 
@@ -74,7 +89,6 @@ function renderTable(clusters, suspicious, nodes, suspiciousDetails, canopies) {
   const nodeMap = Object.fromEntries(nodes.map(n => [n.id, n]));
   const detailOf = Object.fromEntries((suspiciousDetails || []).map(d => [d.user_id, d]));
 
-  // Global non-suspicious group
   const allMembers = Object.values(clusters).flat();
   const nonGlobal = allMembers.filter(u => !suspicious.includes(u));
   const nonUnique = Array.from(new Set(nonGlobal));
@@ -90,7 +104,6 @@ function renderTable(clusters, suspicious, nodes, suspiciousDetails, canopies) {
     </div>
   `);
 
-  // Suspicious per-cluster with reasons and comment snippet
   Object.entries(clusters).forEach(([cid, members]) => {
     const sus = members.filter(m => suspicious.includes(m));
     if (sus.length === 0) return;
@@ -98,28 +111,29 @@ function renderTable(clusters, suspicious, nodes, suspiciousDetails, canopies) {
       const det = detailOf[u];
       const nodeInfo = nodeMap[u] || {};
       const topPeers = det && (det.top_edges || []).map(e => `${e.peer_label} (${e.weight.toFixed(2)})`).join(', ') || '-';
+      const reasons = det && (det.reasons || []).join(', ') || 'indikasi koordinasi tinggi';
       const alasan = det
-        ? `Skor tinggi (${det.score.toFixed(3)}), rata-rata bobot cluster ${det.cluster_avg_weight.toFixed(3)}, degree ${det.degree}, koneksi utama: ${topPeers}`
+        ? `Skor tinggi (${det.score.toFixed(3)}), kepadatan cluster ${det.cluster_density.toFixed(3)}, repetisi konten ${det.content_repetition.toFixed(3)}, temporal burst ${det.temporal_burst.toFixed(3)}, frekuensi tinggi ${det.high_frequency.toFixed(3)}, alasan utama: ${reasons}, koneksi utama: ${topPeers}`
         : 'Pola koneksi internal tinggi.';
-      const snippet = nodeInfo.text_sample ? nodeInfo.text_sample.replace(/</g,'&lt;') : '';
+      const snippet = nodeInfo.text_sample ? nodeInfo.text_sample.replace(/</g, '&lt;') : '';
       return `
         <li>
           <b>${nameMap[u] || u}</b>
           <div>Alasan: ${alasan}</div>
-          ${snippet ? `<div>Kutipan komentar: “${snippet}”</div>` : ''}
+          ${snippet ? `<div>Kutipan komentar: "${snippet}"</div>` : ''}
         </li>`;
     }).join('') || '<li>-</li>';
 
     parts.push(`
       <div class="card">
-        <h3>Cluster ${cid} — Terduga (${sus.length})</h3>
+        <h3>Cluster ${cid} - Terduga (${sus.length})</h3>
         <ul>${susList}</ul>
       </div>
     `);
   });
 
   const canopyParts = Object.entries(canopies || {}).map(([canopyId, members]) => {
-    return `<li><b>${canopyId}</b> — ${members.length} akun</li>`;
+    return `<li><b>${canopyId}</b> - ${members.length} akun</li>`;
   }).join('');
   const canopySection = canopyParts
     ? `<div class="card"><h3>Ringkasan Canopy</h3><ul>${canopyParts}</ul></div>`
@@ -136,7 +150,6 @@ form.addEventListener('submit', async (e) => {
   const payload = {
     url: document.getElementById('url').value,
     max_comments: Number(document.getElementById('max_comments')?.value || 200),
-    // sisanya pakai default backend
   };
 
   try {
@@ -150,15 +163,14 @@ form.addEventListener('submit', async (e) => {
       throw new Error(err.detail || `HTTP ${res.status}`);
     }
     const data = await res.json();
-  renderMetrics(data.metrics || {}, data.timings || {});
-  renderGraph(data.nodes, data.edges, data.clusters, data.suspicious, data.suspicious_details || []);
-  renderTable(data.clusters, data.suspicious, data.nodes, data.suspicious_details || [], data.canopies || {});
+    renderMetrics(data.metrics || {}, data.timings || {});
+    renderGraph(data.nodes, data.edges, data.clusters, data.suspicious, data.suspicious_details || []);
+    renderTable(data.clusters, data.suspicious, data.nodes, data.suspicious_details || [], data.canopies || {});
   } catch (err) {
     metricsDiv.innerHTML = `<div class="card error">Error: ${err.message}</div>`;
   }
 });
 
-// Tip ringan: jelaskan UI tanpa tour library
 window.addEventListener('DOMContentLoaded', () => {
   const helper = document.querySelector('.helper');
   if (helper) {

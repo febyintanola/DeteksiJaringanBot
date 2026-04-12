@@ -51,7 +51,13 @@ async def test_pipeline():
     print(f"Clusters: {len(clusters)}")
 
     print("Scoring...")
-    suspicious, metrics, details = score_clusters(nodes, edges, clusters, canopy_assignments=canopy.assignments)
+    suspicious, metrics, details = score_clusters(
+        nodes,
+        edges,
+        clusters,
+        canopy_assignments=canopy.assignments,
+        parsed=parsed,
+    )
     print(f"Suspicious users: {len(suspicious)}")
     print(f"Metrics: {metrics}")
     if details:

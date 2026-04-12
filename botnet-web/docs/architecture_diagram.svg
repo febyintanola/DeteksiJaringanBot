@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860">
+  <defs>
+    <style>
+      .title { font: 700 28px Arial, Helvetica, sans-serif; fill: #111; }
+      .subtitle { font: 12px Arial, Helvetica, sans-serif; fill: #444; }
+      .groupTitle { font: 700 14px Arial, Helvetica, sans-serif; fill: #111; }
+      .boxTitle { font: 700 14px Arial, Helvetica, sans-serif; fill: #111; }
+      .boxText { font: 12px Arial, Helvetica, sans-serif; fill: #111; }
+      .muted { font: 12px Arial, Helvetica, sans-serif; fill: #444; }
+      .group { fill: #fafafa; stroke: #cfcfcf; stroke-width: 1.2; rx: 16; ry: 16; }
+      .box { fill: #ffffff; stroke: #222; stroke-width: 1.2; rx: 14; ry: 14; }
+      .arrow { stroke: #111; stroke-width: 2; fill: none; }
+      .dash { stroke-dasharray: 6 6; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="40" y="52" class="title">Diagram Arsitektur Sistem — Bot Network Detector (TikTok)</text>
+  <text x="40" y="80" class="subtitle">Frontend (static) dilayani FastAPI, pipeline analisis berjalan di backend, sumber data dari TikTokApi+Playwright, snapshot disimpan ke folder data/</text>
+
+  <!-- Groups -->
+  <rect x="40" y="110" width="520" height="700" class="group" />
+  <text x="60" y="140" class="groupTitle">Client (Browser)</text>
+
+  <rect x="590" y="110" width="520" height="700" class="group" />
+  <text x="610" y="140" class="groupTitle">Backend (FastAPI App)</text>
+
+  <rect x="1140" y="110" width="220" height="370" class="group" />
+  <text x="1160" y="140" class="groupTitle">External</text>
+
+  <rect x="1140" y="510" width="220" height="300" class="group" />
+  <text x="1160" y="540" class="groupTitle">Storage</text>
+
+  <!-- Client boxes -->
+  <rect x="80" y="180" width="440" height="100" class="box" />
+  <text x="100" y="210" class="boxTitle">UI (Static Frontend)</text>
+  <text x="100" y="232" class="boxText">static/index.html, static/app.js, static/styles.css</text>
+  <text x="100" y="254" class="boxText">- Form input URL + max_comments</text>
+  <text x="100" y="274" class="boxText">- Visualisasi graf (Cytoscape.js) + tabel</text>
+
+  <rect x="80" y="310" width="440" height="85" class="box" />
+  <text x="100" y="340" class="boxTitle">HTTP Client</text>
+  <text x="100" y="362" class="boxText">POST /api/run (JSON request) → tampilkan hasil</text>
+
+  <!-- Backend boxes -->
+  <rect x="630" y="180" width="440" height="120" class="box" />
+  <text x="650" y="210" class="boxTitle">FastAPI App</text>
+  <text x="650" y="232" class="boxText">app/main.py</text>
+  <text x="650" y="254" class="boxText">- Serve static frontend (/) dan (/static/*)</text>
+  <text x="650" y="274" class="boxText">- Endpoint analisis: POST /api/run</text>
+
+  <rect x="630" y="320" width="440" height="105" class="box" />
+  <text x="650" y="350" class="boxTitle">Orchestrator + Validation</text>
+  <text x="650" y="372" class="boxText">Validasi input (Pydantic) + jalankan pipeline berurutan</text>
+  <text x="650" y="392" class="boxText">Butuh env: ms_token</text>
+
+  <rect x="630" y="445" width="440" height="315" class="box" />
+  <text x="650" y="475" class="boxTitle">Pipeline Modules (app/pipeline)</text>
+  <text x="650" y="497" class="boxText">1) fetch_comments (TikTokApi+Playwright)</text>
+  <text x="650" y="519" class="boxText">2) parse_comments → mention/reply/thread + user_texts</text>
+  <text x="650" y="541" class="boxText">3) build_canopies → TF-IDF + SVD (+ ANN opsional)</text>
+  <text x="650" y="563" class="boxText">4) build_graph → weighted graph (+ penalti lintas canopy)</text>
+  <text x="650" y="585" class="boxText">5) mst_cluster → komunitas/cluster (MST cut)</text>
+  <text x="650" y="607" class="boxText">6) score_clusters → suspicious + metrics + details</text>
+  <text x="650" y="639" class="muted">Output: nodes, edges, clusters, canopies, suspicious_details, metrics, timings</text>
+
+  <!-- External boxes -->
+  <rect x="1160" y="180" width="180" height="90" class="box" />
+  <text x="1178" y="210" class="boxTitle">TikTokApi</text>
+  <text x="1178" y="232" class="boxText">API wrapper TikTok</text>
+  <text x="1178" y="252" class="boxText">(repo lokal)</text>
+
+  <rect x="1160" y="285" width="180" height="120" class="box" />
+  <text x="1178" y="315" class="boxTitle">Playwright</text>
+  <text x="1178" y="337" class="boxText">Browser automation</text>
+  <text x="1178" y="359" class="boxText">chromium/webkit</text>
+  <text x="1178" y="381" class="boxText">headless sessions</text>
+
+  <!-- Storage boxes -->
+  <rect x="1160" y="575" width="180" height="100" class="box" />
+  <text x="1178" y="605" class="boxTitle">data/</text>
+  <text x="1178" y="627" class="boxText">comments.json</text>
+  <text x="1178" y="649" class="boxText">comments_*.json</text>
+
+  <rect x="1160" y="690" width="180" height="95" class="box" />
+  <text x="1178" y="720" class="boxTitle">Logs</text>
+  <text x="1178" y="742" class="boxText">loguru (stdout/file)</text>
+  <text x="1178" y="764" class="boxText">timings & errors</text>
+
+  <!-- Arrows -->
+  <!-- Browser UI to Backend static -->
+  <path d="M 520 230 L 630 230" class="arrow" marker-end="url(#arrow)" />
+  <text x="540" y="220" class="subtitle">GET / (serve static)</text>
+
+  <!-- Browser POST to API -->
+  <path d="M 520 352 L 630 352" class="arrow" marker-end="url(#arrow)" />
+  <text x="540" y="342" class="subtitle">POST /api/run</text>
+
+  <!-- Orchestrator to pipeline -->
+  <path d="M 850 425 L 850 445" class="arrow" marker-end="url(#arrow)" />
+
+  <!-- Pipeline to external (fetch) -->
+  <path d="M 1070 505 L 1160 225" class="arrow" marker-end="url(#arrow)" />
+  <path d="M 1070 525 L 1160 345" class="arrow" marker-end="url(#arrow)" />
+  <text x="1080" y="240" class="subtitle">fetch comments</text>
+
+  <!-- Pipeline to storage (snapshot) -->
+  <path d="M 1070 640 L 1160 625" class="arrow dash" marker-end="url(#arrow)" />
+  <text x="1080" y="617" class="subtitle">persist snapshot</text>
+
+  <!-- Backend response to browser -->
+  <path d="M 630 730 L 520 730 L 520 215" class="arrow" marker-end="url(#arrow)" />
+  <text x="380" y="722" class="subtitle">JSON results → render graph/table</text>
+
+  <!-- Legend -->
+  <text x="40" y="840" class="muted">Catatan: garis putus-putus = penyimpanan snapshot raw comments (reproducibility). Fitur upload offline (CSV) belum ada.</text>
+</svg>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760">
+  <defs>
+    <style>
+      .title { font: 700 28px Arial, Helvetica, sans-serif; fill: #111; }
+      .laneTitle { font: 700 14px Arial, Helvetica, sans-serif; fill: #111; }
+      .boxTitle { font: 700 14px Arial, Helvetica, sans-serif; fill: #111; }
+      .boxText { font: 12px Arial, Helvetica, sans-serif; fill: #111; }
+      .muted { font: 12px Arial, Helvetica, sans-serif; fill: #444; }
+      .lane { fill: #fafafa; stroke: #d0d0d0; stroke-width: 1; }
+      .box { fill: #ffffff; stroke: #222; stroke-width: 1.2; rx: 14; ry: 14; }
+      .boxAlt { fill: #ffffff; stroke: #222; stroke-width: 1.2; rx: 14; ry: 14; }
+      .arrow { stroke: #111; stroke-width: 2; fill: none; }
+      .dash { stroke-dasharray: 6 6; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="40" y="50" class="title">Pipeline Deteksi Jaringan Bot (TikTok) — Alur Implementasi</text>
+  <text x="40" y="78" class="muted">Sesuai modul pada botnet-web (fetch → parse → canopy → graph → MST → scoring → visualisasi)</text>
+
+  <!-- Swimlanes -->
+  <rect x="40" y="110" width="1320" height="130" class="lane" />
+  <text x="55" y="140" class="laneTitle">Frontend (Browser)</text>
+
+  <rect x="40" y="250" width="1320" height="130" class="lane" />
+  <text x="55" y="280" class="laneTitle">Backend API (FastAPI)</text>
+
+  <rect x="40" y="390" width="1320" height="260" class="lane" />
+  <text x="55" y="420" class="laneTitle">Processing Modules (Pipeline)</text>
+
+  <rect x="40" y="660" width="1320" height="70" class="lane" />
+  <text x="55" y="690" class="laneTitle">Storage & Output</text>
+
+  <!-- Boxes: Frontend -->
+  <rect x="90" y="150" width="260" height="70" class="box" />
+  <text x="110" y="176" class="boxTitle">Form Input</text>
+  <text x="110" y="198" class="boxText">URL video + max komentar</text>
+
+  <rect x="410" y="150" width="260" height="70" class="box" />
+  <text x="430" y="176" class="boxTitle">Kirim Request</text>
+  <text x="430" y="198" class="boxText">POST /api/run</text>
+
+  <rect x="730" y="150" width="300" height="70" class="box" />
+  <text x="750" y="176" class="boxTitle">Visualisasi Hasil</text>
+  <text x="750" y="198" class="boxText">Cytoscape.js + tabel ringkasan</text>
+
+  <!-- Boxes: Backend -->
+  <rect x="90" y="290" width="300" height="70" class="box" />
+  <text x="110" y="316" class="boxTitle">API Orchestrator</text>
+  <text x="110" y="338" class="boxText">Validasi input + jalankan pipeline</text>
+
+  <rect x="430" y="290" width="300" height="70" class="box" />
+  <text x="450" y="316" class="boxTitle">Logging & Timing</text>
+  <text x="450" y="338" class="boxText">Metrik + waktu tiap tahap</text>
+
+  <rect x="770" y="290" width="260" height="70" class="box" />
+  <text x="790" y="316" class="boxTitle">Response JSON</text>
+  <text x="790" y="338" class="boxText">nodes, edges, clusters, metrics</text>
+
+  <!-- Boxes: Processing Modules -->
+  <rect x="90" y="450" width="300" height="70" class="box" />
+  <text x="110" y="476" class="boxTitle">Fetch Comments</text>
+  <text x="110" y="498" class="boxText">TikTokApi + Playwright (ms_token)</text>
+
+  <rect x="430" y="450" width="250" height="70" class="box" />
+  <text x="450" y="476" class="boxTitle">Parse Comments</text>
+  <text x="450" y="498" class="boxText">mention/reply/thread + user_texts</text>
+
+  <rect x="720" y="450" width="260" height="70" class="box" />
+  <text x="740" y="476" class="boxTitle">Canopy Clustering</text>
+  <text x="740" y="498" class="boxText">TF-IDF + SVD (+ ANN opsional)</text>
+
+  <rect x="1010" y="450" width="300" height="70" class="box" />
+  <text x="1030" y="476" class="boxTitle">Build Weighted Graph</text>
+  <text x="1030" y="498" class="boxText">combine mention/reply/thread/content</text>
+
+  <rect x="430" y="540" width="250" height="70" class="boxAlt" />
+  <text x="450" y="566" class="boxTitle">MST Clustering</text>
+  <text x="450" y="588" class="boxText">NetworkX MST + cut weak links</text>
+
+  <rect x="720" y="540" width="260" height="70" class="boxAlt" />
+  <text x="740" y="566" class="boxTitle">Scoring</text>
+  <text x="740" y="588" class="boxText">cluster score → suspicious users</text>
+
+  <!-- Storage & output -->
+  <rect x="90" y="675" width="360" height="40" class="box" />
+  <text x="110" y="701" class="boxText">Snapshot raw comments: data/comments.json (+ timestamp)</text>
+
+  <rect x="500" y="675" width="810" height="40" class="box" />
+  <text x="520" y="701" class="boxText">Output API: nodes/edges + clusters + canopies + suspicious_details + metrics + timings</text>
+
+  <!-- Arrows: Frontend to Backend -->
+  <path d="M 350 185 L 410 185" class="arrow" marker-end="url(#arrow)" />
+  <path d="M 670 185 L 730 185" class="arrow" marker-end="url(#arrow)" />
+
+  <!-- Frontend request down to API -->
+  <path d="M 540 220 L 540 290" class="arrow" marker-end="url(#arrow)" />
+
+  <!-- API down to fetch -->
+  <path d="M 240 360 L 240 450" class="arrow" marker-end="url(#arrow)" />
+
+  <!-- Modules flow top row -->
+  <path d="M 390 485 L 430 485" class="arrow" marker-end="url(#arrow)" />
+  <path d="M 680 485 L 720 485" class="arrow" marker-end="url(#arrow)" />
+  <path d="M 980 485 L 1010 485" class="arrow" marker-end="url(#arrow)" />
+
+  <!-- Down from graph build to MST -->
+  <path d="M 1160 520 L 1160 560 L 680 560" class="arrow" marker-end="url(#arrow)" />
+
+  <!-- MST to scoring -->
+  <path d="M 680 575 L 720 575" class="arrow" marker-end="url(#arrow)" />
+
+  <!-- Scoring up to response JSON -->
+  <path d="M 850 540 L 850 430 L 900 430 L 900 360" class="arrow" marker-end="url(#arrow)" />
+
+  <!-- Response back to frontend visual -->
+  <path d="M 1030 325 L 1180 325 L 1180 130 L 880 130 L 880 150" class="arrow" marker-end="url(#arrow)" />
+
+  <!-- Persist snapshot from fetch -->
+  <path d="M 240 520 L 240 675" class="arrow dash" marker-end="url(#arrow)" />
+
+  <!-- Legend -->
+  <text x="55" y="742" class="muted">Garis putus-putus: penyimpanan snapshot (reproducibility), bukan upload offline.</text>
+</svg>

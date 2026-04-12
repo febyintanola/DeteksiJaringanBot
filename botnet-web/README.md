@@ -38,15 +38,28 @@ Prototype web untuk deteksi jaringan bot pada kolom komentar video TikTok.
 2) Jalankan server
    ```powershell
    $env:ms_token = "<isi_ms_token>"
+   # optional fallback settings when TikTok blocks requests
+   $env:TIKTOK_BROWSER = "webkit"
+   $env:TIKTOK_HEADLESS = "false"
    uvicorn app.main:app --reload --port 8000
    ```
 3) Buka browser ke `http://localhost:8000/`
 
+### Troubleshooting fetch komentar
+- Jika muncul error `TikTok returned an empty response` atau `bot detected`:
+  - Pastikan `ms_token` masih valid (sering expired/invalid).
+  - Coba browser Playwright yang berbeda (`webkit` biasanya lebih stabil):
+    ```powershell
+    $env:TIKTOK_BROWSER = "webkit"
+    $env:TIKTOK_HEADLESS = "false"
+    ```
+  - Pertimbangkan gunakan proxy residential untuk mengurangi deteksi anti-bot.
+
 ## Catatan Algoritma
 - Mention edge: dibuat dari deteksi `@username` dalam teks komentar (v1 memetakan ke user yang juga berkomentar)
-- Konten: v1 memakai Jaccard token overlap (sederhana) untuk baseline → bisa diupgrade ke TF‑IDF / embedding
-- MST: dihitung sebagai minimum spanning tree atas jarak `1/(similarity+eps)`; cluster diperoleh dengan memotong edge MST yang di bawah median bobot per komponen
-- Skoring: kombinasi rata-rata bobot internal cluster dan konsentrasi derajat
+- Konten: canopy pre-filter memakai TF‑IDF + TruncatedSVD untuk mengelompokkan akun yang mirip secara teks; layer graf konten masih memakai overlap token sederhana sebagai baseline
+- MST: dihitung sebagai minimum spanning tree atas jarak `1/(similarity+eps)` dengan algoritma Kruskal; cluster diperoleh dengan memotong edge MST yang di bawah median bobot per komponen
+- Skoring: skor cluster komposit memakai `cluster_density`, `content_repetition`, `temporal_burst`, `high_frequency`, dan `account_age` bila metadata akun tersedia
 - Canopy T1/T2: placeholder di UI, implementasi ANN + canopy akan ditambahkan bertahap
 
 ## Docker (opsional)
