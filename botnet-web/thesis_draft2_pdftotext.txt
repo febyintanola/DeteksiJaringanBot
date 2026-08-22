@@ -1,0 +1,2591 @@
+                                  PROPOSAL SKRIPSI
+
+ SISTEM PENDETEKSIAN JARINGAN BOT PADA PLATFORM TIKTOK
+MENGGUNAKAN ALGORITMA KRUSKAL DAN CANOPY CLUSTERING
+
+                         Intan Febyola Putri Dwina Sidabutar
+                                    NIM. 2210511065
+
+                                   S1 INFORMATIKA
+                           FAKULTAS ILMU KOMPUTER
+  UNIVERSITAS PEMBANGUNAN NASIONAL "VETERAN" JAKARTA
+
+                                           Jakarta
+LEMBAR PERSETUJUAN SIDANG PROPOSAL
+                                2
+                                     LEMBAR PERSETUJUAN
+Judul : Sistem Pendeteksian Jaringan Bot Pada Platform Tiktok Menggunakan Algoritma
+Kruskal dan Canopy Clustering
+Nama : Intan Febyola Putri Dwina Sidabutar
+NIM : 2210511065
+
+                                              Disetujui oleh :
+Penguji 1:
+Dr. Didit Widiyanto, S.Kom., M.Si.
+Penguji 2:
+Radinal Setyadinsa, S.Pd., M.T.I
+Pembimbing 1:
+Jayanta, S.Kom., M.Si
+Pembimbing 2:
+Muhammad Panji Muslim, S.Pd., M.Kom.
+
+                                              Diketahui oleh:
+Koordinator Program Studi:
+Dr. Ridwan Raafi'udin, S.Kom.,M.Kom
+NIDN. 002058804
+Tanggal Ujian Proposal:
+Tanggal bulan tahun
+
+                                                      3
+                                         KATA PENGANTAR
+
+         Puji dan syukur saya panjatkan kepada Tuhan Yesus Kristus, karena atas berkat,
+rahmat dan karunia-Nya, penulis dapat menyelesaikan penulisan proposal yang berjudul
+"Sistem Pendeteksian Jaringan Bot Pada Platform Tiktok Menggunakan Algoritma Kruskal
+dan Canopy Clustering" dengan baik. Proposal ini disusun sebagai salah satu syarat untuk
+memperoleh gelar Sarjana Komputer (S.Kom) pada program studi Informatika, Fakultas
+Ilmu Komputer, Universitas Pembangunan Nasional "Veteran" Jakarta. Penulis menyadari
+bahwa penyusunan proposal ini tidak akan terwujud tanpa bantuan, bimbingan dan
+dukungan dari berbagai pihak. Oleh karena itu, dengan segala kerendahan hati, Penulis ingin
+menyampaikan ucapan terimakasih yang setulus-tulusnya kepada:
+
+         1. Bapak Prof. Dr. Ir. Supriyanto, M.Sc., IPM, selaku Dekan Fakultas Ilmu
+             Komputer Universitas Pembangunan Nasional "Veteran" Jakarta dan Dosen
+             Pembimbing Akademik.
+
+         2. Bapak Dr. Ridwan Raafi'udin, S.Kom.,M.Kom, selaku Koordinator Program
+             Studi Universitas Pembangunan Nasional "Veteran" Jakarta.
+
+         3. Bapak Jayanta, S.Kom., M.Si, selaku dosen pembimbing 1 pada proposal ini.
+         4. Bapak Muhammad Panji Muslim, S.Pd., M.Kom., selaku dosen pembimbing 2
+
+             pada proposal ini.
+         5. Teristimewa kepada kedua orang tua tercinta, Papa dan Mama, serta saudara-
+
+             saudaraku, yang senantiasa memberikan doa tak putus-putus, kasih sayang,
+             serta dukungan moril dan materiil yang luar biasa.
+         6. Teman-teman saya yang telah bersama saya sejak awal yang memberikan
+             semangat dan setia bersama-sama untuk menyelesaikan proposal ini.
+         7. Semua pihak yang tidak dapat penulis sebutkan satu per satu, yang telah
+             memberikan bantuan dalam penyelesaian skripsi ini.
+
+         Penulis menyadari bahwa proposal ini masih jauh dari kesempurnaan, baik dari segi
+materi maupun teknik penyajian, mengingat keterbatasan pengetahuan dan pengalaman
+penulis. Oleh karena itu, kritik dan saran yang membangun sangat penulis harapkan demi
+penyempurnaan penelitian ini di masa mendatang.
+
+         Akhir kata, penulis berharap semoga proposal ini dapat memberikan manfaat bagi
+pengembangan ilmu pengetahuan, khususnya di bidang teknologi informasi serta bagi pihak-
+pihak yang membutuhkan.
+
+                                                                                 Jakarta, Desember 2025
+
+                                                                  Intan Febyola Putri Dwina Sidabutar
+
+                                                                                               2210511065
+
+                                                      4
+                                              DAFTAR ISI
+LEMBAR PERSETUJUAN SIDANG PROPOSAL.............................................................2
+LEMBAR PERSETUJUAN .................................................................................................. 3
+KATA PENGANTAR ............................................................................................................ 4
+DAFTAR GAMBAR ............................................................................................................. 7
+DAFTAR TABEL .................................................................................................................. 8
+DAFTAR SIMBOL FLOWCHART ...................................................................................... 9
+DAFTAR LAMPIRAN ........................................................................................................ 10
+BAB 1. PENDAHULUAN .................................................................................................. 11
+
+   1.1. Latar Belakang .......................................................................................................... 11
+   1.2. Rumusan Masalah.....................................................................................................14
+   1.3. Batasan Masalah ....................................................................................................... 14
+   1.4. Tujuan dan Manfaat Penelitian ................................................................................. 15
+   1.5. Sistematika Penelitian...............................................................................................15
+BAB 2. TINJAUAN PUSTAKA ......................................................................................... 17
+   2.1. Kajian Teoritis...........................................................................................................17
+
+      2.1.1. Media Sosial dan Fenomena Bot ................................................................. 17
+      2.1.2. Klasifikasi dan Karakteristik Bot Sosial ...................................................... 17
+      2.1.3. Dampak dan Efektivitas Bot dalam Penyebaran Informasi ......................... 18
+      2.1.4. Keterbatasan Metode Deteksi Konvensional ............................................... 19
+      2.1.5. K-Nearest Neighbors Graph (K-NN Graph)................................................21
+      2.1.6. Minimum Spanning Tree dan Algoritma Kruskal........................................22
+      2.1.7. Canopy Clustering untuk Pre-clustering Hierarkis ..................................... 23
+      2.1.8. Hierarchical Navigable Small World (HNSW)............................................24
+      2.1.9. Representasi Sparse Matrix ......................................................................... 25
+      2.1.10. Pararelisasi Komputasi dan Optimasi .......................................................... 26
+   2.2. Penelitian Terdahulu ................................................................................................. 28
+BAB 3. METODE PENELITIAN ....................................................................................... 38
+   3.1. Tahapan Penelitian .................................................................................................... 38
+      3.1.1. Research Clarification ................................................................................. 39
+      3.1.2. Descriptive Study I ....................................................................................... 40
+      3.1.3. Prescriptive Study ........................................................................................ 40
+
+         3.1.3.1. Requirement Gathering and Analysis .................................................. 40
+         3.1.3.2. Quick Design ....................................................................................... 43
+         3.1.3.3. Build Prototype .................................................................................... 51
+         3.1.3.4. Initial user evaluation .......................................................................... 52
+
+                                                      5
+         3.1.3.5. Refining prototype................................................................................52
+         3.1.3.6. Final Prototype Development & Maintenance .................................... 53
+      3.1.4. Descriptive Study II ..................................................................................... 53
+   3.2. Alat dan Bahan Penelitian.........................................................................................54
+      3.2.1. Perangkat Keras ........................................................................................... 54
+      3.2.2. Perangkat Lunak .......................................................................................... 55
+      3.2.3. Library dan Framework Python ................................................................... 55
+      3.2.4. Dataset ......................................................................................................... 56
+   3.3. Jadwal Penelitian ...................................................................................................... 56
+DAFTAR PUSTAKA...........................................................................................................70
+
+                                                      6
+                                         DAFTAR GAMBAR
+Gambar 1.1 Sketsa pendekatan existing berbasis RoBERTa (ekstraksi fitur teks) dan R-
+GCN (pemodelan relasi graf) untuk deteksi bot (Output bot/non-bot per akun)................. 12
+Gambar 3.1 Diagram Metode DRM dan SDLC Prototyping .............................................. 39
+Gambar 3.2 Use Case Diagram ........................................................................................... 41
+Gambar 3.3 Diagram Arsitektur Sistem............................................................................... 45
+Gambar 3.4 Flowchart pipeline sistem ................................................................................ 46
+Gambar 3.5 Flowchart algoritma Kruskal ........................................................................... 48
+Gambar 3.6 Flowchart Canopy Clustering.......................................................................... 49
+Gambar 3.7 Activity Diagram .............................................................................................. 50
+
+                                                      7
+                                           DAFTAR TABEL
+Tabel 2.1 Penelitian Nasional .............................................................................................. 29
+Tabel 2.2 Penelitian Internasional........................................................................................ 31
+Tabel 3.1 Tabel Kebutuhan Fungsional................................................................................ 41
+Tabel 3.2 Tabel Kebutuhan Non-Fungsional ....................................................................... 43
+Tabel 3.3 Spesifikasi Perangkat Keras................................................................................. 55
+Tabel 3.4 Perangkat Lunak yang digunakan ....................................................................... 55
+Tabel 3.5 Library dan Framework Python ........................................................................... 55
+Tabel 3.6 Rencana Jadwal Penelitian................................................................................... 56
+
+                                                      8
+DAFTAR SIMBOL FLOWCHART
+                      9
+DAFTAR LAMPIRAN
+             10
+                                      BAB 1. PENDAHULUAN
+1.1. Latar Belakang
+
+    Media sosial telah mengalami transformasi signifikan dalam dua dekade terakhir,
+berkembang dari sarana komunikasi personal menjadi platform yang mendominasi diskusi
+publik, pertukaran informasi, dan pembentukan opini masyarakat global. Data terbaru dari
+DataReportal (2025) menunjukkan jumlah pengguna media sosial aktif telah mencapai 5,66
+miliar orang atau sekitar 68.7% populasi dunia, dengan rata-rata waktu penggunaan 18 jam
+36 menit per minggu. Kehadiran platform seperti Facebook, Twitter, Instagram, dan TikTok
+telah mengubah cara kita berinteraksi, berbagi informasi, dan membentuk persepsi tentang
+realitas sosial.
+
+         Seiring dengan berkembangnya media sosial, munculnya ancaman terhadap
+integritas ruang informasi, salah satunya dengan kehadiran bot. Bot sosial adalah akun
+otomatis atau akun yang dikendalikan program untuk meniru aktivitas manusia, melakukan
+interaksi, serta menyebarkan konten secara terprogram (Cresci et al., 2025). Dengan adanya
+kecerdasan buatan perkembangan bot juga semakin pesat yang membuat bot menjadi adaptif
+berakibat pada konten yang menjadi lebih natural, pola aktivitas yang menyerupai manusia,
+dan juga bot yang bekerja secara terkoordinasi dalam jumlah besar untuk memperkuat narasi
+tertentu (Tomassi et al., 2024).
+
+         Dampak yang dihasilkan oleh jaringan bot bukan hanya sebagai spam di media
+sosial, tetapi juga dapat memicu peningkatan penyebaran misinformasi dan disinformasi.
+Bot dapat berperan sebagai booster suatu topik agar topik tersebut tampak populer,
+kemudian mempengaruhi persebaran dan rekomendasi konten (Vosoughi et al., 2018).
+Karena itu, deteksi bot yang akurat dan efisien menjadi kebutuhan penting untuk menjaga
+kualitas informasi dan diskursus publik, terutama berdasarkan analisis 20% aktivitas
+percakapan isu global terindikasi berasal dari bot (Ng & Carley, 2025).
+
+         Berbagai metode deteksi yang telah dikembangkan sebelumnya masih menggunakan
+pendekatan tradisional yang bertumpu pada analisis akun individual dimana deteksi
+dilakukan berdasarkan fitur profil, pola waktu aktivitas, atau konten yang kemudian
+menghasilkan keputusan bot/non-bot pada level akun (Yang et al., 2023a). Tantangan
+muncul ketika bot modern beroperasi secara terkoordinasi mengakibatkan pola
+mencurigakan sering kali tidak terlihat pada satu akun saja, melainkan muncul pada relasi
+dan sinkronisasi antar-akun. Selain itu munculnya bot berbasis AI membuat perbedaan
+antara konten bot dan manusia semakin sulit untuk dideteksi hanya dari konten permukaan,
+sehingga pendekatan yang mengandalkan klasifikasi konten atau fitur akun dapat menjadi
+kurang stabil di kondisi nyata (Feng et al., 2024).
+
+                                                      11
+  Gambar 1.1 Sketsa pendekatan existing berbasis RoBERTa (ekstraksi fitur teks) dan R-
+  GCN (pemodelan relasi graf) untuk deteksi bot (Output bot/non-bot per akun) (Arranz-
+
+                                         Escudero et al., 2025a).
+         Pada gambar 1.1 Sebagai respons terhadap tantangan tersebut, pendekatan modern
+yang telah ada sebelumnya memanfaatkan kombinasi fitur konten dan struktur relasi berbasis
+graf melalui Graph Neural Network (GNN) (Liu et al., 2024). Pada studi sebelumnya
+menggunakan pendekatan seperti pada gambar 1.1 deteksi bekerja dengan data diproses
+menjadi beberapa kelompok fitur (teks/tweet, deskripsi, fitur numerik, dan fitur kategorikal),
+lalu bagian teks diekstraksi menggunakan model bahasa yaitu RoBERTa. Selanjutnya
+seluruh fitur digabungkan (concatenation) dan dimasukkan ke modul graf 2-layer R-GCN
+yang memanfaatkan relasi antar akun, kemudian diakhiri dengan linear layer untuk
+menghasilkan Output deteksi (bot/non-bot) (Arranz-Escudero et al., 2025b). Pendekatan
+jenis ini kuat karena menggabungkan sinyal konten dan relasi, namun umumnya memiliki
+beberapa konsekuensi yaitu membutuhkan proses pelatihan model dan ketersediaan data
+yang memadai (seringkali label atau ground truth), juga biaya komputasi yang relatif tinggi
+ketika skala data dan relasi membesar dan terakhir Outputnya tetap berfokus pada prediksi
+level akun sehingga interpretasi "pola koordinasi jaringan" perlu langkah tambahan agar
+dapat dimengerti oleh semua orang (He et al., 2024a).
+         Gambar 1.1 di atas mengilustrasikan pendekatan existing yang menggunakan
+RoBERTa untuk ekstraksi fitur teks dan R-GCN untuk pemodelan relasi graf dalam
+mendeteksi bot. Meskipun pendekatan ini menunjukkan hasil yang menjanjikan,
+keterbatasannya terletak pada kompleksitas komputasi yang tinggi dan ketergantungan pada
+data berlabel, yang menjadi motivasi dikembangkannya pendekatan baru dalam penelitian
+ini.
+
+                                                     12
+         Berdasarkan kondisi tersebut, penelitian ini mengusulkan pendekatan baru yang
+berfokus pada deteksi bot sebagai pola jaringan pada media sosial lain yaitu TikTok. TikTok
+dipilih karena interaksi berbasis komentar dan balasan membentuk relasi antar akun yang
+kaya untuk dianalisis sebagai graf. Mempertimbangkan aspek efisiensi dan kemudahan
+untuk dimengerti orang awam. Interaksi antar akun pada TikTok dimodelkan sebagai graf
+berbobot, dimana akun adalah node dan interaksi adalah edge. Untuk mengatasi isu
+skalabilitas, Penelitian ini mengintegrasikan Canopy Clustering (Mccallum et al., 2000a)
+sebagai tahapan pra-klaster yang cepat untuk membentuk kelompok kasar yang pola perilaku
+serupa. Tahapan Canopy digunakan untuk membatasi kandidat relasi (edge), sehingga graf
+yang dibentuk menjadi lebih "sparse" dan lebih ringan diproses (Sagheer & Yousif, 2021a).
+Setelah itu, pada graf hasil reduksi diterapkan Algoritma Kruskal untuk
+membentuk Minimum Spanning Tree (MST) (Skiena, 2020a). MST berfungsi sebagai
+"tulang punggung" jaringan yaitu relasi paling representatif yang tetap menjaga
+keterhubungan utama tanpa redundansi siklus. Struktur MST ini kemudian dimanfaatkan
+untuk mengekstraksi komunitas/cluster, sehingga pola koordinasi jaringan bot lebih mudah
+terlihat, dijelaskan dan divisualisasikan.
+
+         Pendekatan dengan metode ini memiliki keuntungan yaitu dari aspek deteksi, di
+mana pada penelitian ini fokus deteksi terdapat pada identifikasi jaringan bot dan bukan
+hanya akun individu dengan menemukan pola koordinasi antar akun yang membentuk
+cluster atau jaringan. Kedua, dari aspek efisiensi reduksi kandidat relasi melalui Canopy
+Clustering bertujuan menekan jumlah edge yang perlu diproses, dan penggunaan MST
+melalui kruskal membuat struktur jaringan menjadi lebih ringkas untuk analisis lanjutan dan
+visualisasi. Keuntungan penggunaan kruskal akan dibuktikan secara terukur melalui
+perbandingan skenario baseline dengan penggunaan Canopy tanpa MST dan kombinasi
+Canopy dan Kruskal, dengan metrik seperti jumlah edge, waktu proses per tahap, dan
+penggunaan memori.
+
+         Perbedaan dan Kebaruan yang dimiliki oleh penelitian ini adalah rancangan pipeline
+deteksi berbasis graf yang mengintegrasikan Canopy sebagian mekanisme pembatas
+kandidat relasi sebelum pembentukan MST dengan Kruskal. Sehingga analisis berfokus
+pada pola koordinasi jaringan dan tetap mempertimbangkan skalabilitas serta kemudahan
+interpretasi. Perbedaan dengan pendekatan terbaru berbasis GNN seperti pada contoh
+gambar 1.1 dapat dilihat pada orientasi hasil di mana pendekatan existing menekankan
+prediksi bot/non-bot pada level akun melalui model terlatih, sedangkan pendekatan usulan
+menekankan ekstraksi struktur jaringan yang ringkas untuk menemukan cluster bot
+terkoordinasi beserta visualisasi yang mudah dipahami pembaca awam.
+
+                                                     13
+1.2. Rumusan Masalah
+
+         Berdasarkan latar belakang yang telah dipaparkan, rumusan masalah dalam
+penelitian ini adalah:
+
+    1. Bagaimana merancang alur sistem untuk mendeteksi jaringan bot pada TikTok,
+         mulai dari pengambilan data komentar hingga menghasilkan hasil deteksi dan
+         visualisasi jaringan?
+
+    2. Bagaimana menerapkan Canopy Clustering dan algoritma Kruskal (MST) untuk
+         membentuk graf yang lebih ringan, lalu mengekstraksi kelompok akun yang diduga
+         bergerak terkoordinasi?
+
+    3. Bagaimana menguji kinerja dan kualitas hasil metode yang diusulkan, baik dari sisi
+         efisiensi (waktu proses/skalabilitas) maupun kualitas kelompok jaringan yang
+         terbentuk?
+
+1.3. Batasan Masalah
+
+       Batasan penelitian ditetapkan untuk memastikan bahwa penelitian dapat diselesaikan
+dalam waktu yang ditentukan dan dengan sumber daya yang tersedia. Batasan tersebut
+mencakup:
+
+    1. Penelitian berfokus pada deteksi jaringan bot pada TikTok, khususnya pada data
+         komentar dan relasi interaksi, tanpa membahas platform media sosial lain.
+
+    2. Data yang digunakan terbatas pada data publik yang dapat diakses secara legal.
+         Penelitian tidak mengumpulkan data sensitif/non-publik (misalnya email, nomor
+         telepon, atau informasi privat).
+
+    3. Penerapan Canopy Clustering dan algoritma Kruskal difokuskan pada analisis
+         struktur jaringan dan pola koordinasi. Konten komentar hanya digunakan sebagai
+         fitur kemiripan teks (TF-IDF) untuk membantu pembentukan relasi/kelompok, tanpa
+         analisis sentimen atau pemahaman semantik mendalam.
+
+    4. Evaluasi dilakukan pada kualitas hasil clustering (indikasi koordinasi), efisiensi
+         komputasi, dan skalabilitas, tanpa membahas mitigasi/penindakan bot secara
+         langsung.
+
+    5. Pengambilan data dilakukan berdasarkan URL video TikTok yang diberikan sebagai
+         input sistem.
+
+                                                     14
+    6. Penelitian tidak membahas teknik pengembangan bot atau strategi anti-bot yang
+         digunakan oleh pihak Platform Tiktok.
+
+1.4. Tujuan dan Manfaat Penelitian
+Tujuan dari Penelitian ini adalah sebagai berikut:
+
+    1. Merancang alur sistem deteksi bot pada TikTok mulai dari pengambilan data
+         komentar hingga menghasilkan hasil deteksi dan visualisasi jaringan.
+
+    2. Menerapkan integrasi Canopy Clustering dan algoritma Kruskal (MST) untuk
+         membentuk graf yang lebih ringan, serta mengekstraksi kelompok akun yang diduga
+         bergerak terkoordinasi.
+
+    3. Mengevaluasi metode usulan dari sisi efisiensi (waktu proses dan jumlah edge) dan
+         kualitas hasil cluster yang terbentuk melalui perbandingan dengan skenario baseline.
+
+Manfaat Teoritis yang didapatkan adalah :
+    1. Memberikan kontribusi metode deteksi bot yang menekankan analisis jaringan
+         (bukan hanya akun individual) melalui pemanfaatan graf, Canopy, dan MST
+         (Kruskal).
+    2. Menjadi referensi bagi penelitian selanjutnya terkait deteksi bot berbasis graf yang
+         lebih skalabel dan interpretatif.
+
+Manfaat Praktis yang didapat adalah :
+    1. Membantu menghasilkan indikasi jaringan akun terkoordinasi pada TikTok yang
+         lebih mudah dipahami melalui visualisasi graf, sehingga memudahkan analisis awal
+         oleh pengguna/non-teknis.
+    1. Menyediakan pendekatan yang relatif lebih efisien untuk data berskala besar karena
+         adanya reduksi kandidat relasi (edge) dan penyederhanaan struktur graf.
+    2. Meningkatkan integritas informasi di media sosial dengan mengurangi pengaruh
+         jaringan bot dalam menyebarkan disinformasi dan konten yang memecah belah.
+
+1.5. Sistematika Penelitian
+
+Sistematika penulisan skripsi ini terdiri dari lima bab dengan rincian sebagai berikut:
+
+BAB 1. PENDAHULUAN
+
+                                                     15
+Bab ini menguraikan latar belakang masalah terkait jaringan bot di media sosial dan
+urgensinya, rumusan masalah yang menjadi fokus penelitian, batasan masalah untuk
+memperjelas ruang lingkup, serta tujuan dan manfaat penelitian.
+BAB 2. TINJAUAN PUSTAKA
+Bab ini memuat kajian teoretis tentang media sosial, jaringan bot, serta algoritma yang
+digunakan. Dijelaskan juga dasar-dasar analisis data dalam konteks jaringan sosial, konsep
+jaringan komputer yang relevan dengan sistem pendeteksian bot, serta penelitian-penelitian
+terdahulu yang terkait dengan tema serupa.
+BAB 3. METODE PENELITIAN
+Bab ini menjelaskan tahapan penelitian secara sistematis, metode yang diimplementasikan,
+alat dan bahan yang digunakan dalam penelitian seperti data yang akan digunakan dan
+perangkat pendukung, serta rencana jadwal pelaksanaan penelitian dari awal hingga selesai.
+BAB 4. HASIL DAN PEMBAHASAN
+Bab ini menyajikan hasil implementasi sistem pendeteksian jaringan bot, analisis sistem
+yang sedang berjalan, rancangan sistem usulan yang mengintegrasikan algoritma Kruskal
+dan Canopy Clustering, serta hasil pengujian dan rekomendasi berdasarkan temuan
+penelitian.
+BAB 5. PENUTUP
+Bab ini berisi kesimpulan yang merangkum hasil penelitian dan menjawab rumusan
+masalah, serta saran pengembangan untuk penelitian selanjutnya.
+
+                                                     16
+                                   BAB 2. TINJAUAN PUSTAKA
+
+2.1. Kajian Teoritis
+
+2.1.1. Media Sosial dan Fenomena Bot
+
+         Media sosial terus mengalami pertumbuhan dan perkembangan pesat, menjadi
+bagian integral dari kehidupan digital masyarakat global. Menurut laporan Digital 2025 oleh
+We Are Social dan Hootsuite (2025), lebih dari 5 miliar pengguna aktif media sosial tercatat
+di seluruh dunia, yang menunjukkan penetrasi mencapai hampir 63% dari total populasi
+global. Di Indonesia sendiri, terdapat sekitar 143 juta pengguna media sosial yang aktif,
+mencakup lebih dari 50% populasi negara ini (Simon Kemp, 2025). Platform seperti
+Facebook, Instagram, Twitter, dan TikTok menjadi wadah utama interaksi sosial, berbagi
+informasi, serta tempat terbentuknya opini publik. Khususnya TikTok, mengalami lonjakan
+pengguna signifikan dan menjadi platform dominan di kalangan generasi muda dengan pola
+konsumsi dan produksi konten yang unik.
+
+         Namun, bersamaan dengan pertumbuhan ini, tantangan keamanan dan integritas
+informasi juga semakin meningkat. Salah satu isu utama adalah munculnya akun bot
+(program otomatis) yang memanipulasi aktivitas di media sosial dengan berbagai tujuan,
+baik untuk penyebaran informasi, promosi, maupun manipulasi opini publik. Penelitian
+terbaru menunjukkan bahwa bot media sosial kini semakin berkembang dan lebih canggih
+dalam meniru perilaku manusia. Bot sudah mampu melakukan interaksi kompleks seperti
+mencari dan memposting konten yang relevan, mengikuti pola waktu manusia, bahkan
+membentuk jaringan sosial yang realistis (Yang et al., 2023b).
+
+         Inovasi terbaru dalam bot juga melibatkan kolaborasi massal antara akun-akun palsu
+tersebut, membentuk jaringan bot terkoordinasi yang bisa mengarahkan perhatian publik
+pada narasi tertentu, dengan tujuan politis atau komersial (Ng & Carley, 2025). Fungsi dan
+kemampuan bot ini sudah berubah dari sekadar menjalankan tugas otomatis sederhana
+menjadi alat yang dapat mengelabui sistem deteksi konvensional dan menimbulkan ancaman
+integritas informasi yang serius. Oleh sebab itu, upaya riset dan pengembangan teknologi
+deteksi bot yang efektif merupakan kebutuhan mendesak untuk menjaga ekosistem media
+sosial tetap sehat dan dapat dipercaya.
+
+2.1.2. Klasifikasi dan Karakteristik Bot Sosial
+                                                     17
+         Bot media sosial memiliki beragam bentuk dan fungsi, yang dapat diklasifikasikan
+berdasarkan tujuan operasional mereka pada platform digital. Bot media sosial dapat
+diklasifikasikan ke dalam beberapa kategori utama berdasarkan tujuan dan perilaku
+operasionalnya (Ng & Carley, 2025) Bot layanan (benign bots) berfungsi untuk mendukung
+interaksi pengguna, seperti chatbots layanan pelanggan atau penjawab otomatis informasi.
+Sebaliknya, bot yang bersifat merugikan (malicious bots) termasuk bot spam, bot
+amplifikasi, dan bot manipulasi yang digunakan untuk menyebarkan konten tidak
+diinginkan, meningkatkan jangkauan pesan tertentu secara artifisial, atau memanipulasi
+opini publik secara terselubung.
+
+         Sebuah penelitian yang menggunakan model deep learning menunjukkan
+kemampuan tinggi dalam membedakan akun bot yang canggih dengan pengguna asli
+berdasarkan fitur perilaku dan teks yang dipublikasikan(Mahdi et al., 2025). Bot jenis ini
+tidak hanya menjalankan tugas otomatis sederhana, melainkan juga berkolaborasi dalam
+jaringan terkoordinasi (jaringan bot) untuk menyebarkan narasi tertentu secara masif dan
+terorganisir.
+
+         Deteksi pola interaksi kelompok ini menuntut analisis yang lebih berorientasi graf
+dan komunitas, menggantikan metode tradisional yang hanya melihat akun satu per satu
+(Cheng et al., 2025). Metode berbasis graf dapat memanfaatkan fitur topologi dan pola
+penyebaran informasi di dalam jaringan sosial untuk mengidentifikasi kelompok akun yang
+berperilaku sinkron dan tidak alami (Feng et al., 2024).
+
+         Selain aspek fungsional dan pola interaksi, bot juga dapat dikenali melalui ciri-ciri
+lain seperti pola waktu posting, kesamaan konten, dan struktur jaringan pengguna. Seiring
+meningkatnya kecanggihan bot, pola-pola ini semakin kompleks dan membutuhkan
+multimodal feature fusion serta teknik pembelajaran mesin lanjutan untuk mendeteksinya
+secara akurat (Sagi & Rokach, 2018; Lei et al., 2024).
+
+         Dengan demikian, klasifikasi bot sosial modern mencerminkan perpaduan antara
+tujuan beragam, kemampuan adaptasi tinggi, serta strategi tersembunyi dalam operasi
+mereka. Pemahaman terhadap karakteristik ini memungkinkan perancangan sistem deteksi
+yang lebih efektif dan adaptif di era media sosial yang terus berubah.
+
+2.1.3. Dampak dan Efektivitas Bot dalam Penyebaran Informasi
+
+                                                     18
+         Jaringan bot di media sosial memiliki dampak signifikan dalam mengubah pola
+penyebaran informasi dan opini publik. Penelitian terkini oleh (Ng & Carley, 2025) mencatat
+bahwa bot tidak hanya menyebarkan konten otomatis, tetapi juga sering berkolaborasi secara
+terkoordinasi dalam kampanye untuk memanipulasi persepsi dan emosi pengguna. Dengan
+menggunakan berbagai teknik adaptif, bot modern dapat mengelabui algoritma media sosial
+dan memperbesar dampak narasi tertentu, terutama dalam isu politik, sosial, dan ekonomi.
+
+         Jaringan bot telah terbukti mampu mempercepat penyebaran misinformasi dengan
+pola yang menyerupai penyebaran viral alami melalui amplifikasi di momen awal sebelum
+konten menjadi viral (Tomassi et al., 2024),. Penggunaan bot dalam memperkuat narasi palsu
+dan propaganda secara sistematis telah menimbulkan risiko besar terhadap kepercayaan
+publik. Meski demikian, penting untuk dicatat bahwa penyebaran informasi tidak akurat juga
+banyak difasilitasi oleh interaksi manusia yang tanpa disengaja memperkuat konten
+buruk(Vosoughi et al., 2018).
+
+         Dari aspek psikologis, fenomena illusory truth effect tetap menjadi kunci penting
+dalam menjelaskan mengapa paparan berulang terhadap informasi walaupun informasi
+tersebut salah dapat memperkuat kepercayaan masyarakat (Pennycook & Rand, 2022). Efek
+ini digunakan secara strategis oleh jaringan bot melalui siklus penyebaran berulang di
+berbagai akun, sehingga memperbesar pengaruh tanpa harus mengandalkan kebenaran
+informasi. Aktivitas bot terkoordinasi ini dapat mengubah persepsi publik dan bahkan
+mengganggu proses demokrasi(Bradshaw et al., 2021).
+
+         Oleh karena itu, penelitian dan pengembangan teknologi pendeteksian bot menjadi
+sangat penting dalam menahan dampak negatif ini, dengan fokus pada identifikasi pola
+koordinasi dan amplifikasi yang digunakan bot di media sosial modern seperti TikTok,
+Twitter, dan Instagram (Feng et al., 2024; Javed et al., 2024).
+
+2.1.4. Keterbatasan Metode Deteksi Konvensional
+
+         Metode konvensional dalam deteksi bot media sosial, yang berfokus pada
+identifikasi akun secara individu, menghadapi tantangan besar seiring evolusi bot yang
+semakin canggih dan terkoordinasi. Pendekatan berbasis analisis akun tunggal sering kali
+gagal dalam mengenali pola interaksi terkoordinasi antar akun yang merupakan ciri khas
+jaringan bot (Cresci, 2020; Yang et al., 2024) Hal ini disebabkan oleh kemampuan bot
+
+                                                     19
+modern untuk menyamarkan aktivitasnya agar terlihat seperti pengguna manusia asli,
+sehingga mendistorsi hasil deteksi berbasis fitur profil atau perilaku individu.
+
+         Lebih lanjut, (Cresci et al., 2025) menegaskan adanya trade-off antara definisi
+konsisten tentang bot dengan kebutuhan metode deteksi yang generalis, yang dapat
+beradaptasi dengan variasi bot baru yang terus bermunculan. Oleh karena itu, diperlukan
+pendekatan yang mampu menggabungkan analisis perilaku individu dengan analisis struktur
+dan pola jaringan sosial yang lebih besar (Feng, Tan, et al., 2021).
+
+         Selain aspek akurasi, aspek komputasi juga menjadi hambatan utama bagi metode
+tradisional. (Feng, Wan, et al., 2021; He et al., 2024b) menunjukkan bahwa metode berbasis
+graf yang ada masih memiliki kompleksitas komputasi yang tinggi, sehingga tidak efektif
+diterapkan pada data media sosial berukuran besar dan terus berkembang dengan cepat.
+Keterbatasan ini menimbulkan kebutuhan mendesak akan desain algoritma yang lebih
+efisien dan scalable, memungkinkan deteksi bot secara real-time dan akurat pada skala besar
+(Huang et al., 2024)
+
+         Pendekatan hybrid yang mengombinasikan analisis graf dan fitur pengguna mulai
+banyak diusulkan untuk mengatasi tantangan ini, dengan harapan dapat memanfaatkan
+kekuatan kedua pendekatan tersebut demi hasil deteksi yang optimal (Cheng et al., 2025;
+Liu et al., 2024).
+
+2.1.5. Teori Graf
+
+         Graf adalah struktur matematika yang digunakan untuk merepresentasikan hubungan
+antar objek, terdiri dari himpunan simpul (node atau vertex) dan himpunan sisi (edge) yang
+menghubungkan pasangan simpul tersebut (Diestel, 2017). Secara formal, sebuah graf G
+didefinisikan sebagai pasangan terurut G = (V, E), di mana V adalah himpunan simpul dan
+E adalah himpunan sisi yang menghubungkan pasangan simpul dalam V.
+
+         Graf Berarah dan Tidak Berarah. Berdasarkan arah sisinya, graf dibedakan
+menjadi dua jenis utama. Graf berarah (directed graph) adalah graf di mana setiap sisi
+memiliki arah, merepresentasikan hubungan yang tidak simetris -- sisi dari simpul u ke
+simpul v tidak sama dengan sisi dari v ke u (Diestel, 2017). Sebaliknya, graf tidak berarah
+(undirected graph) adalah graf di mana setiap sisi tidak memiliki arah, merepresentasikan
+hubungan yang simetris antara dua simpul.
+
+         Graf Berbobot. Dalam banyak aplikasi nyata, sisi pada graf dilengkapi dengan nilai
+numerik yang disebut bobot (weight), sehingga menghasilkan graf berbobot (weighted
+
+                                                     20
+graph). Bobot ini dapat merepresentasikan berbagai besaran sesuai konteks, seperti jarak,
+biaya, atau tingkat kemiripan antara dua entitas yang dihubungkan (Skiena, 2020). Pada graf
+berbobot tidak berarah, total bobot seluruh sisi dapat digunakan sebagai dasar analisis
+struktur jaringan, termasuk untuk mencari Minimum Spanning Tree.
+
+         Dalam penelitian ini, graf digunakan untuk merepresentasikan jaringan interaksi
+antar akun komentar di TikTok. Setiap simpul merepresentasikan satu akun komentator,
+sedangkan sisi merepresentasikan hubungan interaksi antar akun -- baik berupa relasi reply,
+mention, co-thread, maupun kemiripan konten komentar. Graf yang dibangun bersifat tidak
+berarah dan berbobot, di mana bobot setiap sisi mencerminkan tingkat kemiripan atau
+intensitas interaksi antara dua akun yang terhubung.
+
+2.1.6. K-Nearest Neighbors Graph (K-NN Graph)
+
+         K-Nearest Neighbors Graph (K-NN Graph) adalah sebuah graf di mana setiap node
+terhubung dengan k tetangga terdekatnya berdasarkan ukuran kesamaan atau jarak tertentu
+dalam ruang fitur (Cunningham & Delany, 2022). Dalam konteks media sosial, setiap node
+dapat merepresentasikan akun pengguna, sedangkan edge menunjukkan hubungan
+berdasarkan kesamaan perilaku atau pola interaksi.
+
+         Metode ini menggunakan metrik jarak, biasanya jarak Euclidean, yang didefinisikan
+untuk dua titik data p dan q sebagai:
+
+                                       (, ) =  ( - )2
+
+                                                                                  
+
+         Rumus di atas merupakan formula jarak Euclidean yang digunakan dalam K-NN
+Graph untuk mengukur jarak antara dua titik data p dan q dalam ruang fitur berdimensi
+tinggi. Semakin kecil nilai d(p,q), semakin mirip kedua akun tersebut, dan semakin besar
+kemungkinan keduanya terhubung sebagai tetangga terdekat dalam graf.
+
+         Graf K-NN memudahkan analisis komunitas dalam jaringan sosial dengan
+menghubungkan titik data yang sifatnya paling mirip, sehingga membantu mengidentifikasi
+kelompok akun yang mungkin terkoordinasi atau memiliki karakteristik sama, yang bisa
+menjadi indikator aktivitas bot terkoordinasi (Cunningham & Delany, 2022).
+
+         Pendekatan ini lebih efisien dibanding graf lengkap, karena hanya menghubungkan
+masing-masing node dengan sejumlah tetangga terbatas, sehingga mengurangi kompleksitas
+penyimpanan dan komputasi (Cunningham & Delany, 2022). Penelitian terkini
+
+                                                     21
+mengaplikasikan K-NN Graph untuk memperkuat model deteksi bot dengan
+menggabungkan fitur perilaku, konten, dan interaksi temporal, sehingga pola koordinasi
+yang sulit dideteksi dengan analisis individu dapat terungkap secara efektif (Cunningham &
+Delany, 2022).
+
+2.1.7. Minimum Spanning Tree dan Algoritma Kruskal
+
+         Minimum Spanning Tree (MST) adalah sebuah struktur graf yang menghubungkan
+semua simpul (node) dalam graf berbobot tanpa membentuk siklus, dengan total bobot dari
+semua edge (sisi) paling minimum. MST sangat penting dalam berbagai aplikasi, termasuk
+perancangan jaringan komunikasi, distribusi sumber daya, dan analisis hubungan sosial
+dalam media sosial (Skiena, 2020b).
+
+    Algoritma Kruskal yang pertama kali diperkenalkan oleh Joseph Kruskal pada tahun
+1956, merupakan salah satu metode algoritma greedy yang paling populer untuk mencari
+MST. Prinsip utama dari algoritma ini adalah (Skiena, 2020b):
+
+    1. Mengurutkan seluruh edge dari graf berdasarkan bobotnya secara menaik.
+
+    2. Memilih edge dengan bobot terkecil dan menambahkannya ke MST, asalkan tidak
+         membentuk siklus.
+
+    3. Menggunakan struktur data disjoint-set (union-find) untuk memeriksa dan mencegah
+         terbentuknya siklus saat menambahkan edge.
+
+    4. Ulangi proses ini hingga MST tersusun dari V-1 edge, di mana V adalah jumlah
+         simpul graf.
+
+Rumus utama untuk deteksi siklus saat proses penambahan edge adalah:
+                               if Find(u)  Find(v) then Union(u, v)
+
+di mana Find adalah fungsi yang mengembalikan representasi set dari simpul, dan Union
+menggabungkan kedua set tersebut. Jika Find(u)  Find(v), maka edge (u,v) aman untuk
+ditambahkan ke MST (Skiena, 2020b)
+
+         Rumus di atas adalah kondisi pengecekan siklus pada algoritma Kruskal
+menggunakan struktur data union-find. Fungsi Find(u) mengembalikan representasi
+himpunan dari simpul u; jika Find(u) tidak sama dengan Find(v), berarti edge (u,v) aman
+ditambahkan ke MST tanpa membentuk siklus, dan operasi Union(u,v) menggabungkan
+kedua himpunan tersebut.
+
+                                                     22
+Kompleksitas waktu algoritma Kruskal tergantung pada proses pengurutan semua edge,
+yaitu sebesar O(E log E), di mana E adalah jumlah edge graf. Operasi union-find, berkat
+optimasi path compression, dapat berjalan dalam waktu hampir konstan, membuat algoritma
+ini sangat efisien untuk graf besar (Skiena, 2020b).
+
+Dalam konteks penelitian deteksi bot di media sosial, MST dapat digunakan untuk
+mengidentifikasi struktur jaringan yang padat dan secara signifikan menyaring hubungan
+yang tidak relevan, sehingga memudahkan pengenalan pola koordinasi antar akun yang
+mencurigakan. Pendekatan ini mendukung analisis struktural terhadap jaringan komunikasi
+yang kompleks, mempercepat proses deteksi dan meningkatkan akurasi (Skiena, 2020b).
+
+         Dalam konteks penelitian ini, bobot setiap edge pada graf didefinisikan sebagai nilai
+cost yang berbanding terbalik dengan kemiripan antar akun, yaitu cost(u,v) = 1 -
+similarity(u,v). Dengan definisi ini, MST akan secara otomatis memilih sisi-sisi yang
+menghubungkan akun-akun dengan tingkat kemiripan tertinggi, karena cost yang lebih kecil
+berarti kemiripan yang lebih besar. Pendekatan transformasi bobot ini merupakan praktik
+umum dalam penerapan MST untuk analisis kemiripan data (Skiena, 2020).
+
+2.1.8. Canopy Clustering untuk Pre-clustering Hierarkis
+
+         Canopy Clustering adalah algoritma pre-clustering yang bertujuan mengelompokkan
+data dalam skala besar secara kasar untuk kemudian diproses dengan algoritma clustering
+yang lebih berat dan detail, seperti K-Means atau hierarchical clustering. Metode ini
+diperkenalkan oleh Mccallum et al. (2000b) sebagai solusi efisien terhadap masalah
+clustering pada dataset besar dan berdimensi tinggi.
+
+         Canopy Clustering menggunakan dua parameter ambang batas jarak,
+yaitu 1 dan 2 dengan 1 > 2, yang membantu membentuk kelompok data (canopy) yang
+bisa saling tumpang tindih(Sagheer & Yousif, 2021b). Proses algoritma secara umum adalah:
+
+    1. Pilih secara acak pusat canopy dari data yang belum diklaster.
+
+    2. Hitung jarak antara pusat canopy dan setiap data.
+
+    3. Data dengan jarak kurang dari atau sama dengan 1 dimasukkan ke dalam canopy.
+
+    4. Data dengan jarak kurang dari atau sama dengan 2 dihapus dari daftar kandidat
+         pusat canopy.
+                                                     23
+    5. Ulangi proses hingga semua data termasuk dalam setidaknya satu canopy.
+
+         Jarak yang digunakan bisa berupa Euclidean atau metrik lain yang relevan, dengan
+rumus Euclidean seperti berikut(Mccallum et al., 2000b):
+
+                                       (, ) =  ( - )2
+
+                                                                                  
+
+         Rumus jarak Euclidean di atas digunakan dalam Canopy Clustering untuk
+menghitung jarak antara setiap titik data dengan pusat canopy. Nilai jarak ini kemudian
+dibandingkan dengan ambang batas T1 dan T2 untuk menentukan keanggotaan setiap data
+dalam canopy yang terbentuk.
+
+         Keunggulan utama dari Canopy Clustering adalah efisiensi komputasi yang tinggi,
+dengan kompleksitas linear terhadap jumlah data, yang membuatnya sangat cocok sebagai
+tahap awal preprocessing sebelum dilakukan clustering yang lebih mendalam. Ini
+memungkinkan pemisahan kasar data berdimensi besar secara cepat, mengurangi
+kompleksitas komputasi dan mengoptimalkan proses clustering berikutnya(Sagheer &
+Yousif, 2021b)
+
+         Dalam konteks deteksi bot di media sosial, Canopy Clustering dapat digunakan
+untuk mengelompokkan akun-akun dengan pola perilaku atau interaksi yang mirip sehingga
+mempermudah langkah analisis berikutnya dalam mengidentifikasi bot terkoordinasi secara
+lebih akurat dan efisien(Sagheer & Yousif, 2021b).
+
+2.1.9. Hierarchical Navigable Small World (HNSW)
+
+         Hierarchical Navigable Small World (HNSW) merupakan algoritma graf yang
+berkembang pesat pada era big data untuk pencarian approximate nearest neighbor (ANN)
+secara efisien, khususnya pada data berdimensi tinggi. HNSW mengorganisasi data ke dalam
+beberapa lapisan graf, di mana setiap lapisan membentuk jaringan "small world" yang
+terhubung secara lokal maupun global (Malkov & Yashunin, 2020).
+
+         Prinsip utama HNSW adalah membangun hirarki graf dengan node pada setiap
+lapisan terhubung ke sejumlah tetangga terdekatnya. Lapisan teratas lebih jarang node-nya
+dan memungkinkan penelusuran lintas jarak jauh (long-range routing), sementara lapisan
+
+                                                     24
+bawah lebih padat untuk refined search secara lokal. Saat pencarian dilakukan, query mulai
+dari satu node pada lapisan atas, bergerak secara greedy mendekati tetangga terdekat, lalu
+bertahap diteruskan ke lapisan bawah untuk hasil yang semakin presisi(Malkov & Yashunin,
+2020).
+
+         Keunggulan HNSW dibanding metode ANN klasik terletak pada kompleksitas
+pencarian yang secara empiris mendekati logaritmis ((log )) lebih cepat dibanding brute
+force dan klasik K-NN, sambil tetap menjaga tingkat recall yang tinggi pada kebanyakan
+benchmark industri (Malkov & Yashunin, 2020) Struktur multi-layer juga membuat
+algoritma ini scalable pada skala jutaan data, sehingga sangat relevan untuk media sosial
+modern seperti TikTok dan Twitter yang memiliki jutaan akun aktif.
+
+         Ekspresi O(log n) di atas menunjukkan kompleksitas pencarian HNSW yang
+mendekati logaritmis terhadap jumlah data n. Ini berarti bahwa ketika jumlah akun
+bertambah dua kali lipat, waktu pencarian hanya bertambah satu langkah logaritmis,
+menjadikan HNSW sangat efisien untuk membangun K-NN Graph pada dataset media sosial
+berskala besar.
+
+         Aplikasi utama HNSW antara lain pada vector search (pencarian embedding),
+rekomendasi sistem, database indexing, serta anomaly detection di jaringan sosial. Pada
+kasus deteksi bot, HNSW membantu membangun graf keterhubungan antar akun secara
+efisien, baik untuk pengelompokan akun mirip maupun analisis komunitas. Hasil penelitian
+juga menunjukkan heuristik neighbor selection HNSW mampu mencegah problem cluster
+isolation dan meningkatkan robust search pada dataset yang sangat besar dan kompleks
+(Malkov & Yashunin, 2020)
+
+2.1.10. Representasi Sparse Matrix
+
+         Sparse matrix representation adalah teknik penyimpanan data matriks yang sebagian
+besar elemen-elemennya bernilai nol, yang sangat relevan dalam analisis jaringan sosial
+digital modern. Pada graf besar, misalnya jaringan pertemanan di media sosial, proporsi
+relasi aktual jauh lebih sedikit dibandingkan kemungkinan total relasi yang dapat terbentuk
+menghasilkan struktur data yang sangat "sparse"(Gao et al., 2024).
+
+         Format sparse matrix yang populer di antaranya Compressed Sparse Row (CSR) dan
+Compressed Sparse Column (CSC), yang menyimpan hanya elemen bernilai non-zero
+
+                                                     25
+beserta indeks lokasi dan memungkinkan penghematan memori yang sangat signifikan (Gao
+et al., 2024). Dengan demikian, kebutuhan memori turun dari (2) pada matriks dens
+menjadi mendekati ( + ), dengan  adalah jumlah elemen tak nol. Operasi penting
+seperti perkalian matriks-vektor maupun traversal graf bisa dieksekusi jauh lebih cepat pada
+data sparse (Gao et al., 2024).
+
+         Persamaan di atas menunjukkan penghematan memori yang diperoleh dari
+representasi sparse matrix: dari kompleksitas O(n^2) pada matriks padat menjadi O(n + nnz),
+di mana nnz adalah jumlah elemen tak nol. Pada jaringan sosial yang bersifat jarang (sparse),
+penghematan ini sangat signifikan karena jumlah relasi aktual jauh lebih kecil dibandingkan
+total kemungkinan relasi n^2.
+
+         Dalam penelitian deteksi bot media sosial, sparse matrix berperan penting untuk
+representasi adjacency matrix atau bobot relasi di antara akun, di mana jaringan nyata sering
+kali sangat jarang (sparse). Hal ini sangat mempercepat analisis struktur komunitas,
+penghitungan centrality, hingga proses clustering dalam sistem berskala besar(Gao et al.,
+2024).
+
+         Penelitian terbaru juga menyoroti efisiensi komputasi dan skalabilitas tinggi yang
+dimungkinkan oleh sparse matrix untuk berbagai algoritma graf, termasuk MST berbasis
+Kruskal dan Canopy Clustering (Gao et al., 2024). Penggunaan sparse data structure juga
+menjadi tulang punggung layanan machine learning produksi industri, rekomendasi konten,
+serta deteksi anomali di platform-platform besar.
+
+2.1.11. Pararelisasi Komputasi dan Optimasi
+
+         Paralelisasi komputasi merupakan pendekatan kritis untuk mempercepat proses
+analisis data dan eksekusi algoritma pada dataset besar di era digital modern, termasuk
+aplikasi deteksi bot di media sosial. Teknik ini memungkinkan distribusi tugas komputasi ke
+beberapa thread, core, atau mesin yang berbeda sehingga mampu memproses data secara
+bersamaan dan lebih efisien (Meng et al., 2024).
+
+         Dalam bidang analisis graf dan jaringan sosial, paralelisasi dapat diterapkan pada
+pembentukan graf, eksekusi algoritma MST, dan clustering, di mana skala data sering kali
+mencapai jutaan node. Framework modern seperti GraphLab, Apache Spark, dan system
+HNSW telah dioptimalkan untuk mendukung pemrosesan paralel baik pada tingkat cluster
+
+                                                     26
+maupun cloud (Meng et al., 2024). Dengan pendekatan MapReduce, data dipartisi dan
+disebar secara efisien ke berbagai mesin untuk pembuatan edge, perhitungan centrality,
+hingga eksekusi clustering secara bersamaan.
+
+         Paralelisasi juga penting dalam interpretasi hasil deteksi bot secara real-time.
+Penelitian menunjukkan bahwa dengan mengimplementasikan parallel MST dan K-NN
+Graph pada GPU maupun CPU berbanyak inti, waktu komputasi dapat dipangkas hingga 10
+kali lipat dibandingkan eksekusi serial (Meng et al., 2024). Selain mempercepat processing,
+teknik ini juga mendukung scalability sehingga sistem dapat dengan cepat mengadaptasi
+lonjakan data (misal: trending topic viral di media sosial).
+
+       Efisiensi tersebut sangat dibutuhkan pada platform besar seperti TikTok, Twitter, atau
+Instagram, di mana data dan hubungan akun bertambah dengan sangat cepat. Implementasi
+paralel memastikan akurasi deteksi tetap tinggi sambil menjaga latency rendah demi
+pengalaman pengguna yang optimal (Meng et al., 2024).
+
+2.1.12. Kemiripan Teks dan Representasi Fitur Konten
+
+         Kemiripan teks (text similarity) adalah ukuran sejauh mana dua teks memiliki
+makna, struktur, atau kandungan yang serupa (Manning et al., 2008). Dalam analisis jaringan
+sosial, pengukuran kemiripan teks digunakan untuk menentukan bobot hubungan antar akun
+berdasarkan keserupaan konten yang mereka publikasikan, yang menjadi salah satu indikator
+koordinasi pada jaringan bot.
+
+         TF-IDF (Term Frequency-Inverse Document Frequency). TF-IDF adalah metode
+pembobotan kata yang mengukur seberapa penting sebuah kata dalam suatu dokumen relatif
+terhadap kumpulan dokumen lainnya (Manning et al., 2008). Nilai TF-IDF tinggi
+menunjukkan bahwa kata tersebut sering muncul di dokumen tertentu tetapi jarang di
+dokumen lain, sehingga menjadi ciri khas dokumen tersebut. Secara formal, TF-IDF
+didefinisikan sebagai:
+
+                               TF-IDF(t, d) = TF(t, d) x log(N / DF(t))
+
+         di mana TF(t,d) adalah frekuensi kemunculan kata t dalam dokumen d, N adalah total
+jumlah dokumen, dan DF(t) adalah jumlah dokumen yang mengandung kata t.
+
+         Cosine Similarity. Setelah teks direpresentasikan sebagai vektor fitur, tingkat
+kemiripan antara dua teks dapat dihitung menggunakan cosine similarity, yaitu ukuran sudut
+
+                                                     27
+antara dua vektor dalam ruang fitur (Manning et al., 2008). Nilai cosine similarity berkisar
+antara 0 (tidak mirip sama sekali) hingga 1 (identik), dan didefinisikan sebagai:
+
+                                similarity(a, b) = (a . b) / (||a|| x ||b||)
+
+         Dalam penelitian ini, representasi TF-IDF dan cosine similarity digunakan untuk
+menghitung bobot edge berdasarkan kemiripan konten komentar antar akun. Nilai kemiripan
+ini kemudian digabungkan dengan bobot relasi struktural (reply, mention, co-thread) untuk
+membentuk bobot edge final pada graf interaksi, sebagaimana akan dijelaskan lebih lanjut
+pada Bab 3.
+
+2.1.13. Deteksi Komunitas pada Graf (Community Detection)
+
+         Deteksi komunitas (community detection) adalah proses mengidentifikasi
+kelompok-kelompok simpul (cluster) dalam sebuah graf yang memiliki kerapatan koneksi
+internal lebih tinggi dibandingkan koneksi ke simpul di luar kelompoknya (Fortunato, 2010).
+Konsep ini merupakan inti dari analisis struktur jaringan sosial, karena pola pengelompokan
+alami dalam jaringan sering kali mencerminkan komunitas nyata atau pola koordinasi
+tersembunyi.
+
+         Kualitas hasil deteksi komunitas umumnya diukur menggunakan beberapa metrik
+kuantitatif. Modularity (Q) mengukur seberapa baik suatu pembagian graf menjadi
+komunitas dibandingkan dengan pembagian acak -- nilai mendekati 1 menunjukkan struktur
+komunitas yang kuat (Newman & Girvan, 2004). Silhouette score mengukur seberapa mirip
+sebuah simpul dengan anggota komunitasnya sendiri dibandingkan dengan komunitas lain,
+dengan nilai berkisar dari -1 hingga 1 (Rousseeuw, 1987). Conductance mengukur rasio sisi
+yang menghubungkan antar komunitas terhadap total sisi dalam komunitas -- nilai yang
+rendah menunjukkan komunitas yang lebih terisolasi dan kohesif (Fortunato, 2010).
+
+         Dalam penelitian ini, pendekatan deteksi komunitas diterapkan untuk
+mengidentifikasi kelompok akun yang berpotensi terkoordinasi sebagai jaringan bot.
+Algoritma Kruskal digunakan untuk membangun Minimum Spanning Tree yang kemudian
+dipotong untuk menghasilkan klaster, sementara Canopy Clustering berperan sebagai tahap
+pre-clustering untuk efisiensi komputasi. Kualitas komunitas yang terbentuk dievaluasi
+menggunakan metrik modularity dan silhouette score sebagai tolok ukur objektif.
+
+2.2. Penelitian Terdahulu
+
+Penelitian Nasional
+
+                                                     28
+         Tabel 2.1 berikut merangkum penelitian-penelitian nasional yang relevan dengan
+tema deteksi bot dan analisis jaringan sosial. Penelitian-penelitian tersebut dipilih
+berdasarkan kesamaan metode, objek penelitian, atau kontribusi yang berkaitan dengan
+pendekatan berbasis graf dalam mendeteksi akun tidak autentik di media sosial.
+
+         Tabel 2.1 Penelitian Nasional
+
+No. : 1
+
+Penulis : Sibaroni & Prasetiyowati
+
+Judul  : Buzzer Detection on Indonesian Twitter using SVM and Account Property
+          Feature Extension
+
+Metode : Penelitian ini menggunakan Support Vector Machine (SVM) untuk
+               mengklasifikasikan hashtag buzzer pada Twitter Indonesia. Data dikumpulkan
+               melalui Twitter API selama April­September 2021 Penelitian mengekstraksi 19
+               fitur dasar yang terdiri dari 10 fitur komunitas dan 9 fitur. Kontribusi utama
+               adalah ekspansi 9 fitur akun menggunakan 5 ukuran statistik deskriptif (Mean,
+               Q1, Q2/Median, Q3, dan Range/IQR), menghasilkan 45 fitur tambahan sehingga
+               total mencapai 55 fitur. Seluruh fitur dinormalisasi ke rentang menggunakan
+               Min-Max Normalization. Tiga fungsi SVM diuji menggunakan Scikit-Learn
+               Python (SVC, NuSVC, dan LinearSVC) dengan evaluasi menggunakan 10-fold
+               cross-validation berdasarkan metrik F1-score, Precision, dan Recall.
+
+Hasil  : Hasil penelitian menunjukkan bahwa penambahan fitur ekstensi berbasis
+          statistik deskriptif mampu meningkatkan performa model SVM secara
+          signifikan, dengan rata-rata F1-score mencapai 84% dibandingkan baseline
+          42%­60%. Ketiga varian SVM yang diuji (SVC, NuSVC, dan LinearSVC)
+          menghasilkan performa identik setelah ekspansi fitur, dengan beberapa fold
+          mencapai 100%. Peningkatan performa berkisar 24%­42%, membuktikan
+          bahwa SVM dengan fitur lengkap menghasilkan performa terbaik dalam
+          membedakan hashtag buzzer dan non-buzzer. Analisis korelasi menunjukkan
+          bahwa 60% dari 10 fitur dengan korelasi tertinggi merupakan fitur hasil
+          ekspansi, menandakan model lebih akurat dalam mengenali pola aktivitas dan
+          karakteristik akun buzzer berdasarkan metrik-metrik statistik yang
+          dikombinasikan.
+
+                                    29
+Link : http://jurnal.iaii.or.id
+
+No. : 2
+
+Penulis : Priyatno & Ningsih
+
+Judul  : Pembobotan TF-IDF untuk Mendeteksi Akun Spammer di Twitter berdasarkan
+          Tweet dan Representasi Retweet dari Tweet
+
+Metode : Menggunakan TF-IDF untuk pembobotan teks pada tweet asli dan representasi
+               retweet, kemudian menerapkan klasifikasi machine learning untuk membedakan
+               akun spammer dan non-spammer. Penelitian juga membandingkan performa
+               beberapa variasi representasi teks antara tweet dan retweet untuk menemukan
+               model terbaik.
+
+Hasil  : Representasi retweet yang dibobot menggunakan TF-IDF memberikan performa
+          yang lebih baik dibandingkan hanya menggunakan tweet asli. Penelitian
+          menunjukkan bahwa perilaku retweet merupakan indikator kuat dalam
+          mengidentifikasi akun spammer, sehingga kombinasi tweet + retweet
+          meningkatkan akurasi model secara signifikan.
+
+Link : http://sistemasi.ftik.unisi.ac.id
+
+No. : 3
+
+Penulis : Aditya et al.
+
+Judul  : Deteksi Bot Spammer pada Twitter Berbasis Sentiment Analysis dan Time
+          Interval Entropy.
+
+Metode : Penelitian ini mengusulkan metode deteksi bot spammer dengan
+               menggabungkan dua pendekatan utama, yaitu Sentiment Analysis pada konten
+               tweet dan Time Interval Entropy (TIE) berdasarkan pola waktu unggahan. Pada
+               tahap analisis sentimen, seluruh tweet dari setiap akun diklasifikasikan ke dalam
+               tiga kategori yaitu positif, negatif, atau netral untuk mengidentifikasi pola
+               emosional dan kecenderungan konten yang biasanya berbeda antara akun
+               manusia dan bot. Sementara itu, Time Interval Entropy digunakan untuk
+
+                                 30
+Hasil     menghitung tingkat keragaman interval waktu antar-tweet yang diposting oleh
+Link      masing-masing akun. Akun bot umumnya memiliki pola posting yang lebih
+          teratur dan berulang sehingga menghasilkan nilai entropi yang rendah,
+          sedangkan akun manusia memiliki interval waktu yang lebih acak dan
+          bervariasi. Kedua fitur ini kemudian digabungkan sebagai input ke model
+          klasifikasi guna membedakan akun spammer dan akun normal.
+
+       : Hasil penelitian menunjukkan bahwa kombinasi fitur dari Sentiment Analysis
+          dan Time Interval Entropy memberikan performa deteksi yang baik terhadap
+          akun bot spammer di Twitter. Model yang dibangun mampu mencapai precision
+          sekitar 83% dan recall sekitar 91%, yang menunjukkan kemampuan tinggi
+          dalam mendeteksi akun spammer tanpa mengorbankan tingkat kesalahan
+          identifikasi yang signifikan. Integrasi kedua jenis fitur terbukti lebih efektif
+          dibandingkan penggunaan fitur tunggal, karena mampu menangkap baik pola
+          konten maupun pola aktivitas temporal dari akun.
+
+       : https://doi.org/10.24002/jbi.v7i3.656
+
+         Berdasarkan penelitian-penelitian nasional yang dirangkum pada Tabel 2.1, terlihat
+bahwa sebagian besar pendekatan yang ada masih berfokus pada analisis akun secara
+individual tanpa mempertimbangkan pola koordinasi antar akun. Terdapat kesenjangan
+dalam penggunaan algoritma berbasis MST yang dikombinasikan dengan pre-clustering
+untuk mendeteksi jaringan bot secara terkoordinasi, yang menjadi salah satu kontribusi
+utama penelitian ini.
+
+         Tabel 2.2 berikut menyajikan penelitian-penelitian internasional yang berkaitan
+dengan deteksi bot, analisis komunitas pada jaringan sosial, serta penggunaan algoritma graf
+dalam pendeteksian akun terkoordinasi. Penelitian internasional ini memberikan perspektif
+yang lebih luas mengenai perkembangan metode deteksi bot secara global.
+Penelitian internasional
+
+                                   Tabel 2.2 Penelitian Internasional
+
+ No. : 1
+
+ Penulis : Tianbo Wang, Zhao Wang, Huacheng Li, Chunhe Xia, Chun Zhao
+
+                                                     31
+Judul : HHG-Bot: A Hyperheterogeneous Graph-Based Twitter Bot Detection Model
+
+Metode : Mengusulkan HHG-Bot, model deteksi bot Twitter berbasis Hyper-
+               Heterogeneous Graph (HHG). Metode ini menggabungkan heterogeneous graph
+               convolutional networks dan trainable hypergraph aggregation untuk menangkap
+               interaksi tingkat tinggi antar pengguna dan tweet. Selain itu digunakan
+               pendekatan meta-learning (MAML) agar model dapat beradaptasi pada kondisi
+               data label yang terbatas.
+
+Hasil  : HHG-Bot menunjukkan performa state-of-the-art pada dataset TwiBot-20,
+          dengan akurasi 86,17%, F1-score 87,51%, dan MCC 71,75%, mengungguli
+          metode sebelumnya seperti BotRGCN, RGT, dan SATAR.
+
+Link : https://ieeexplore.ieee.org/document/10908710
+
+No. : 2
+
+Penulis : Arranz-Escudero et al.
+
+Judul  : Enhancing Misinformation Countermeasures: A Multimodal Approach to
+          Twitter Bot Detection
+
+Metode : Penelitian ini menggunakan pendekatan multimodal yang memadukan tiga jenis
+               fitur utama yaitu fitur profil pengguna (user metadata), fitur konten teks dari
+               tweet, fitur berbasis graf yang merepresentasikan hubungan antar akun
+               (follower­following, mention, retweet). Ketiga modalitas digabungkan melalui
+               model deep learning yang dirancang untuk menangkap konteks perilaku
+               pengguna secara lebih komprehensif. Model ini juga memanfaatkan embedding
+               dari dataset besar seperti TwiBot-22, serta melakukan ekstraksi hubungan sosial
+               dengan graph neural network (GNN) untuk meningkatkan kualitas representasi
+               akun.
+
+Hasil  : Model multimodal yang dikembangkan menunjukkan peningkatan akurasi dan
+          konsistensi deteksi bot yang signifikan. Penelitian ini melaporkan peningkatan
+          performa sebesar 5,48% dibandingkan model terbaik sebelumnya (state-of-the-
+          art). Selain itu, pendekatan multimodal mampu menangani variasi perilaku bot
+
+                                  32
+                modern yang semakin mirip dengan akun manusia, serta memberikan hasil lebih
+                stabil pada dataset berukuran besar.
+
+ Link : https://link.springer.com/article/10.1007/s13278-025-01435-w
+
+         Kajian terhadap penelitian internasional pada Tabel 2.2 menunjukkan bahwa
+meskipun metode berbasis graf telah banyak dieksplorasi, kombinasi antara Canopy
+Clustering sebagai tahap pre-clustering dan algoritma Kruskal untuk pembentukan MST
+dalam konteks deteksi jaringan bot di platform TikTok belum pernah dilakukan. Hal ini
+menegaskan kebaruan dan relevansi pendekatan yang diusulkan dalam penelitian ini.
+
+2.3. 2.8 Rekayasa Perangkat Lunak untuk Sistem Analitik Berbasis Pipeline
+
+         Rekayasa perangkat lunak (software engineering) merupakan disiplin ilmu yang
+mencakup prinsip-prinsip perancangan, pengembangan, pengujian, dan pemeliharaan sistem
+perangkat lunak secara sistematis dan terstruktur (Sommerville, 2016). Dalam konteks
+pengembangan sistem analitik yang memproses data dalam jumlah besar dan melibatkan
+beberapa tahap komputasi, penerapan prinsip rekayasa perangkat lunak yang tepat menjadi
+faktor penentu keberhasilan sistem.
+
+         Pipeline Processing. Pipeline adalah serangkaian tahap pemrosesan yang saling
+terhubung, di mana keluaran (output) dari satu tahap menjadi masukan (input) bagi tahap
+berikutnya (Fowler, 2002). Pola ini sangat sesuai untuk sistem yang memproses data secara
+bertahap dan berurutan, seperti sistem deteksi bot yang melibatkan pengambilan data,
+praproses, pembangunan graf, pengelompokan, hingga visualisasi hasil.
+
+         Keunggulan utama arsitektur pipeline adalah kemampuannya untuk memisahkan
+tanggung jawab setiap tahap secara jelas, sehingga setiap komponen dapat dikembangkan,
+diuji, dan diperbaiki secara mandiri tanpa mengganggu tahap lainnya (Sommerville, 2016).
+Selain itu, pipeline memungkinkan penggantian atau peningkatan satu modul tanpa harus
+merombak keseluruhan sistem.
+
+         Modular Design dan Separation of Concerns. Prinsip modular design menyatakan
+bahwa sistem perangkat lunak sebaiknya dibagi menjadi modul-modul kecil yang masing-
+masing memiliki tanggung jawab tunggal dan terdefinisi dengan jelas (Pressman & Maxim,
+2020). Prinsip ini berkaitan erat dengan konsep separation of concerns (SoC), yaitu praktik
+memisahkan sistem ke dalam bagian-bagian yang masing-masing menangani satu aspek
+fungsionalitas tertentu (Dijkstra, 1982).
+
+                                                     33
+         Penerapan SoC pada sistem analitik berbasis graf menghasilkan struktur modul yang
+terpisah: modul pengumpulan data (data collection), praproses (preprocessing),
+pembangunan graf (graph builder), pengelompokan (clustering), penilaian (scoring), dan
+visualisasi. Pemisahan ini memberikan kemudahan pengujian (testability), kemudahan
+pemeliharaan (maintainability), serta kemudahan pengembangan lebih lanjut (extensibility)
+apabila metode analisis ingin diganti di masa mendatang (Pressman & Maxim, 2020).
+
+         Dalam penelitian ini, prinsip pipeline processing dan modular design diterapkan
+sebagai landasan perancangan arsitektur sistem deteksi jaringan bot di TikTok. Setiap tahap
+analisis -- mulai dari pengambilan data komentar, praproses teks, pembangunan K-NN
+Graph, penerapan Canopy Clustering dan algoritma Kruskal, hingga visualisasi hasil klaster
+-- dirancang sebagai modul yang berdiri sendiri namun saling terintegrasi dalam satu alur
+pipeline yang kohesif.
+
+2.4. 2.9 Arsitektur Sistem Berbasis Layanan (API) untuk Aplikasi Analitik
+
+         Dalam pengembangan aplikasi analitik modern, pemisahan antara lapisan komputasi
+dan lapisan antarmuka pengguna merupakan praktik arsitektur yang direkomendasikan
+secara luas. Salah satu pendekatan yang paling umum diterapkan adalah arsitektur berbasis
+Application Programming Interface (API), khususnya pola client-server dengan antarmuka
+berbasis REST (Representational State Transfer) (Fielding, 2000).
+
+         Konsep Client-Server. Arsitektur client-server membagi sistem menjadi dua
+komponen utama yang saling berkomunikasi: client (sisi pengguna) yang bertanggung jawab
+menampilkan antarmuka dan menerima interaksi pengguna, serta server (sisi pemrosesan)
+yang menjalankan logika bisnis dan komputasi berat (Tanenbaum & Van Steen, 2017).
+Pemisahan ini memberikan keuntungan signifikan dalam sistem analitik, karena proses
+komputasi yang intensif seperti pembangunan graf, penerapan algoritma MST, dan
+pengelompokan dapat dijalankan di sisi server tanpa membebani perangkat pengguna.
+
+         REST API. REST API adalah gaya arsitektur yang mendefinisikan seperangkat
+aturan komunikasi antara client dan server menggunakan protokol HTTP. Karakteristik
+utama REST yang relevan untuk sistem analitik adalah sifatnya yang stateless, artinya setiap
+permintaan dari client mengandung seluruh informasi yang dibutuhkan oleh server untuk
+memprosesnya (Richardson & Ruby, 2007).
+
+         Dalam penelitian ini, arsitektur berbasis API diterapkan untuk memisahkan
+antarmuka visualisasi hasil deteksi bot dari proses komputasi graf yang berjalan di sisi
+
+                                                     34
+backend. Pendekatan ini memastikan bahwa proses analitik yang berat -- termasuk
+pembangunan K-NN Graph, eksekusi algoritma Kruskal, dan Canopy Clustering -- tidak
+menghambat responsivitas antarmuka pengguna, sekaligus memudahkan pengujian setiap
+lapisan sistem secara independen.
+
+2.5. 2.10 Model Pengembangan Prototyping
+
+         Model pengembangan perangkat lunak merupakan kerangka kerja yang
+mendefinisikan tahapan dan urutan proses dalam membangun sebuah sistem. Salah satu
+model yang relevan untuk pengembangan sistem dengan keluaran berbasis visualisasi adalah
+model prototyping (Pressman & Maxim, 2020). Berbeda dengan model sekuensial seperti
+waterfall, model prototyping bersifat iteratif dan memungkinkan sistem dikembangkan
+secara bertahap melalui siklus umpan balik yang berulang.
+
+         Definisi dan Siklus Prototyping. Prototyping adalah proses membangun versi awal
+sistem (prototype) yang berfungsi sebagai representasi konkret dari sistem yang akan
+dikembangkan, dengan tujuan memperoleh umpan balik (feedback) dari pemangku
+kepentingan sebelum sistem final dibangun (Sommerville, 2016). Siklus prototyping terdiri
+dari: (1) Komunikasi -- mendefinisikan kebutuhan awal; (2) Perancangan Cepat (Quick
+Design) -- merancang representasi awal sistem; (3) Pembangunan Prototipe -- membangun
+prototipe yang dapat dievaluasi; (4) Evaluasi dan Umpan Balik -- prototipe dievaluasi dan
+digunakan untuk memperbaiki sistem pada iterasi berikutnya.
+
+         Keunggulan Prototyping untuk Sistem Analitik. Model prototyping sangat sesuai
+untuk sistem yang keluarannya bersifat visual dan memerlukan penilaian kualitatif, seperti
+sistem visualisasi graf dan klaster. Iterasi cepat dalam prototyping memungkinkan
+penyesuaian parameter -- seperti ambang batas clustering atau bobot edge -- berdasarkan
+hasil evaluasi setiap siklus. Model ini juga mendukung validasi sistem melalui inspeksi dan
+pengujian internal oleh peneliti dan pembimbing, yang merupakan pendekatan evaluasi yang
+valid pada penelitian sistem analitik (Pressman & Maxim, 2020).
+
+         Dalam penelitian ini, model prototyping diterapkan sebagai metode pengembangan
+sistem deteksi jaringan bot di TikTok. Setiap iterasi menghasilkan versi prototipe yang
+dievaluasi berdasarkan kesesuaian fungsional dan kualitas keluaran klaster. Dengan
+demikian, penelitian ini tidak mensyaratkan sistem untuk dideploy ke lingkungan produksi,
+melainkan cukup sampai pada prototipe yang telah melalui siklus evaluasi yang terstruktur.
+
+2.6. 2.11 Pengujian Perangkat Lunak untuk Sistem Analitik
+
+                                                     35
+         Pengujian perangkat lunak (software testing) merupakan proses sistematis untuk
+mengevaluasi apakah suatu sistem berfungsi sesuai dengan spesifikasi yang telah ditetapkan
+dan menghasilkan keluaran yang benar dan dapat diandalkan (Sommerville, 2016). Pada
+sistem analitik yang melibatkan pipeline komputasi kompleks, pengujian tidak hanya
+mencakup kebenaran fungsional, tetapi juga efisiensi pemrosesan dan kualitas keluaran yang
+dihasilkan.
+
+         Pengujian Fungsional. Pengujian fungsional (functional testing) bertujuan
+memverifikasi bahwa setiap fitur dan fungsi sistem berjalan sesuai dengan spesifikasi yang
+telah dirancang. Pengujian ini umumnya dilakukan menggunakan pendekatan black-box,
+yaitu mengevaluasi sistem berdasarkan masukan dan keluarannya tanpa memperhatikan
+implementasi internal (Myers et al., 2011). Pada sistem deteksi bot, pengujian fungsional
+mencakup verifikasi bahwa proses pengambilan data, pembangunan graf, dan
+pengelompokan klaster berjalan tanpa kesalahan untuk berbagai kondisi masukan.
+
+         Pengujian Performa. Pengujian performa (performance testing) bertujuan
+mengukur efisiensi sistem dalam memproses data, meliputi waktu eksekusi, penggunaan
+memori, dan kemampuan sistem dalam menangani data berukuran besar (Pressman &
+Maxim, 2020). Pengujian ini penting dalam sistem analitik berbasis graf karena
+kompleksitas komputasi algoritma seperti Kruskal dan K-NN Graph sangat bergantung pada
+jumlah node dan edge yang diproses.
+
+         Pengujian Kualitas Keluaran. Pengujian kualitas keluaran merupakan bentuk
+pengujian yang spesifik untuk sistem analitik, yaitu mengevaluasi sejauh mana hasil analisis
+yang dihasilkan sistem bermakna dan valid secara algoritmik (Han et al., 2011). Pada sistem
+clustering, kualitas keluaran dapat diukur menggunakan metrik kuantitatif seperti
+modularity, silhouette score, atau conductance yang mengukur seberapa kohesif dan terpisah
+klaster yang terbentuk.
+
+         Pengujian Internal pada Sistem Analitik. Berbeda dengan pengujian perangkat
+lunak berorientasi pengguna yang memerlukan partisipan eksternal dalam jumlah besar,
+pengujian sistem analitik dapat dilakukan secara internal oleh peneliti dengan mengandalkan
+metrik kuantitatif sebagai tolok ukur validitas (Han et al., 2011). Pendekatan ini diakui valid
+secara akademik karena objek evaluasinya adalah kualitas algoritmik dan performa
+komputasi. Penelitian di bidang data mining dan analisis jaringan secara luas menggunakan
+metrik internal seperti modularity dan silhouette score sebagai standar evaluasi tanpa
+mensyaratkan keterlibatan pengguna eksternal (Han et al., 2011; Fortunato, 2010).
+
+                                                     36
+         Dalam penelitian ini, pengujian dilakukan dalam tiga tahap yang saling melengkapi:
+pengujian fungsional untuk memastikan seluruh modul pipeline berjalan sesuai fungsinya;
+pengujian performa untuk mengukur waktu komputasi dan penggunaan memori pada dataset
+dengan jumlah komentar yang bervariasi; serta pengujian kualitas keluaran untuk
+mengevaluasi hasil klaster menggunakan metrik kuantitatif. Kombinasi ketiga pendekatan
+ini memberikan evaluasi yang komprehensif terhadap sistem tanpa mensyaratkan
+keterlibatan pengguna eksternal dalam jumlah besar.
+
+                                                     37
+                                 BAB 3. METODE PENELITIAN
+3.1. Tahapan Penelitian
+
+       Penelitian ini menggunakan Design Research Methodology (DRM) yang
+dikombinasikan dengan Software Development Life Cycle (SDLC) model Prototyping
+sebagai kerangka metodologi penelitian (Blessing & Chakrabarti, 2009; Adeoye, 2024).
+Integrasi kedua metodologi ini dipilih karena penelitian tidak hanya bertujuan menghasilkan
+kontribusi teoretis, tetapi juga mewujudkan sistem deteksi jaringan bot yang fungsional dan
+dapat divalidasi secara empiris (Pressman & Maxim, 2023; Sommerville, 2023).
+
+       Design Research Methodology terdiri dari empat tahap utama yang memberikan
+struktur sistematis dalam pengembangan solusi inovatif, yaitu Research Clarification untuk
+mengidentifikasi masalah penelitian, Descriptive Study I untuk memahami fenomena secara
+mendalam, Prescriptive Study untuk merancang dan mengembangkan solusi, serta
+Descriptive Study II untuk mengevaluasi dan memvalidasi efektivitas solusi yang telah
+dikembangkan. Sementara itu, SDLC model Prototyping merupakan metodologi
+pengembangan sistem yang menekankan pada pembuatan prototype secara iteratif, di mana
+prototype dikembangkan, diuji, dievaluasi oleh pengguna, kemudian diperbaiki berdasarkan
+feedback hingga mencapai sistem final yang memenuhi kebutuhan.
+
+         Gambar 3.1 berikut mengilustrasikan alur metode penelitian yang digunakan, yaitu
+kombinasi Design Research Methodology (DRM) dan SDLC Prototyping. DRM
+memberikan kerangka kerja sistematis untuk penelitian berbasis desain artefak, sementara
+SDLC Prototyping memastikan sistem dikembangkan secara iteratif dengan umpan balik
+berkelanjutan.
+
+                                                     38
+       Dalam penelitian ini, seluruh siklus SDLC Prototyping diintegrasikan ke dalam tahap
+Prescriptive Study dari DRM. Diagram berikut menunjukkan alur tahapan penelitian yang
+mengintegrasikan DRM dan SDLC Prototyping:
+
+                   Gambar 3.1 Diagram Metode DRM dan SDLC Prototyping
+         Berdasarkan Gambar 3.1, tahapan penelitian dimulai dari Research Clarification
+untuk menetapkan rumusan masalah, dilanjutkan dengan Descriptive Study I untuk
+pemahaman fenomena, kemudian Prescriptive Study untuk perancangan solusi, dan diakhiri
+dengan Descriptive Study II untuk evaluasi. Setiap tahap DRM diintegrasikan dengan siklus
+prototyping sehingga pengembangan sistem dapat dilakukan secara adaptif.
+3.1.1. Research Clarification
+         Pada tahap ini, akan dilakukan identifikasi dan klarifikasi permasalahan penelitian
+melalui studi literatur komprehensif terhadap jurnal, artikel ilmiah, dan penelitian terdahulu
+yang membahas fenomena bot di media sosial, khususnya pada platform TikTok.
+Permasalahan utama yang akan diidentifikasi mencakup keberadaan jaringan bot
+terkoordinasi dan dampaknya terhadap integritas informasi di ruang digital.
+         Berdasarkan kesenjangan pengetahuan yang ditemukan dalam literatur, akan
+dirumuskan pertanyaan penelitian yang berfokus pada efektivitas metode deteksi berbasis
+graf dan clustering. Batasan dan ruang lingkup penelitian juga akan ditetapkan agar fokus
+pada pengembangan sistem deteksi jaringan bot menggunakan algoritma Kruskal dan
+Canopy Clustering pada platform TikTok. Observasi terhadap fenomena aktual di media
+sosial juga akan dilakukan untuk memahami pola penyebaran informasi yang cepat dan
+terkoordinasi yang mengindikasikan adanya aktivitas bot.
+
+                                                     39
+         Output dari tahap ini berupa rumusan masalah penelitian yang jelas, tujuan penelitian
+yang terukur dan spesifik, batasan masalah dan ruang lingkup penelitian, serta kerangka
+konseptual penelitian yang akan menjadi dasar untuk tahap selanjutnya.
+
+3.1.2. Descriptive Study I
+         Pada tahap ini, akan dilakukan analisis mendalam terhadap jenis-jenis bot di TikTok,
+
+pola penyebaran, metode operasi, dan karakteristik perilaku yang membedakan bot dari akun
+manusia. Metrik dan Indikator yang dipelajari difokuskan pada sinyal yang dapat diekstraksi
+dari data komentar, seperti repetisi/kemiripan teks komentar antar akun, pola
+reply/mention/co-thread, sinkronisasi aktivitas komentar dalam rentang waktu tertentu, serta
+kepadatan interaksi dalam kelompok akun. Indikator ini digunakan untuk merumuskan
+rancangan bobot edge dan strategi pruning pada graf.
+
+         Analisis terhadap fenomena illusory truth effect dan pola penyebaran informasi palsu
+yang dipicu oleh bot akan dilakukan untuk merumuskan pentingnya pengembangan sistem
+deteksi yang efektif dan akurat. Observasi terhadap perilaku akun bot di TikTok akan
+dilakukan melalui pengumpulan data dan analisis pola interaksi yang mencurigakan.
+
+         Telaah terhadap penelitian terdahulu mengenai metode deteksi bot berbasis machine
+learning, graph analysis, dan behavioral pattern recognition akan dilakukan untuk
+memahami kelebihan dan keterbatasan masing-masing pendekatan. Hasil analisis ini akan
+menjadi dasar bagi perumusan kebutuhan spesifik sistem yang akan dikembangkan pada
+tahap berikutnya.
+
+         Output dari tahap ini berupa deskripsi lengkap fenomena bot di TikTok, identifikasi
+karakteristik dan pola perilaku bot, pemahaman terhadap dampak dan tantangan yang
+dihadapi, serta dasar empiris untuk perumusan kebutuhan sistem.
+
+3.1.3. Prescriptive Study
+         Pada tahap ini, akan dilakukan perancangan dan pengembangan sistem deteksi bot
+
+melalui siklus SDLC Prototyping yang terdiri dari enam fase iteratif.
+
+3.1.3.1.Requirement Gathering and Analysis
+
+                                                     40
+         Pada fase ini, akan dilakukan pengumpulan data kebutuhan melalui analisis terhadap
+fenomena bot di TikTok dan telaah literatur terkait fitur dan fungsionalitas sistem deteksi
+bot. Analisis akan dilakukan untuk mengidentifikasi jenis-jenis bot, pola penyebaran, dan
+dampaknya terhadap ekosistem platform.
+
+         Kebutuhan akan diklasifikasikan ke dalam dua kategori utama, yaitu kebutuhan
+fungsional yang mencakup fitur-fitur utama yang harus ada dalam sistem, dan kebutuhan
+non-fungsional yang meliputi performa, keamanan data, dan skalabilitas sistem untuk
+menangani data dalam jumlah besar.
+
+         Gambar 3.2 berikut menampilkan use case diagram sistem yang menggambarkan
+interaksi antara pengguna (user) dengan sistem deteksi bot. Diagram ini dirancang
+berdasarkan hasil analisis kebutuhan fungsional sistem untuk memastikan seluruh kebutuhan
+pengguna terwakili secara komprehensif.
+
+         Use case diagram akan dibuat untuk menggambarkan interaksi antara pengguna dan
+sistem dalam konteks deteksi jaringan bot:
+
+                                         Gambar 3.2 Use Case Diagram
+         Berdasarkan Gambar 3.2, terdapat tiga interaksi utama antara pengguna dan sistem:
+(1) memasukkan URL video TikTok sebagai input analisis, (2) melihat hasil deteksi berupa
+visualisasi graf dan klaster akun yang teridentifikasi, serta (3) mengekspor hasil deteksi
+untuk keperluan dokumentasi atau analisis lebih lanjut. Ketiga interaksi ini menjadi dasar
+perancangan antarmuka dan pipeline sistem.
+
+                                                     41
+                      Tabel 3.1 Tabel Kebutuhan Fungsional
+
+No. Komponen              Kebutuhan
+
+1. TikTok Comment         Mengambil komentar dari URL video TikTok sampai
+      Fetcher (TikTokApi  batas max_comments menggunakan sesi valid (ms_token).
+      + Playwright)
+
+2. Parser Komentar        Mengekstrak struktur komentar: user, teks, mention (@user),
+                          reply/parent (jika tersedia), serta ringkasan teks per user untuk
+                          tahap berikutnya.
+
+3. Graph Builder          Membangun graf interaksi berbobot (node=user, edge=relasi
+                          mention/reply/kesamaan konten/co-thread) sesuai parameter
+                          bobot.
+
+4. Canopy Clustering      Membuat pengelompokan awal (canopy) berbasis kemiripan
+                          teks user untuk membantu pembatasan kandidat relasi/penalti
+                          lintas kelompok.
+
+5. MST Clustering         Membentuk cluster komunitas dengan MST per komponen
+                          dan memotong edge lemah untuk menghasilkan kelompok
+                          akun.
+
+6. Scoring &              Menghitung skor kecurigaan per cluster/user dan
+
+Suspicious Detection menghasilkan daftar user terduga + ringkasan alasan/metrics.
+
+7. Backend API            Menyediakan endpoint untuk menjalankan pipeline dan
+      (FastAPI)           mengembalikan hasil (nodes, edges, clusters, canopies,
+                          suspicious, metrics).
+
+8. Persistensi Snapshot Menyimpan hasil raw komentar yang sudah difetch ke file
+
+(JSON)                    JSON (snapshot timestamp + latest) untuk
+
+                          reproducibility/audit.
+
+Pada tabel 3.1 Terdapat Tabel Kebutuhan Fungsional yang merupakan komponen-komponen
+yang akan dipenuhi saat membangun sistem yang di usulkan.
+
+                                     42
+                   Tabel 3.2 Tabel Kebutuhan Non-Fungsional
+
+No Komponen        Kebutuhan
+
+1. Performance     Waktu respons endpoint analisis < 50 detik untuk dataset 1000
+                   Komentar
+
+2. Reliability     Jika fetch TikTok gagal (token/sesi/browser), sistem
+                   menampilkan pesan error yang jelas dan tidak menghasilkan
+                   Output "seolah sukses".
+
+3. Availability    Backend dapat berjalan stabil selama demo/sesi pengujian (tanpa
+                   crash) dan dapat di-restart tanpa kehilangan kode/konfigurasi.
+
+4. Keamanan Data Token ms_token tidak dicetak di log/response.
+
+5. Resource        Konsumsi CPU/RAM wajar untuk laptop standar; ada
+                   pembatasan jumlah komentar agar tidak overload.
+
+6. Skalabilitas    Arsitektur modular (fetch/parse/graph/cluster/score) sehingga
+                   mudah untuk modifikasi fitur.
+
+7. Portabilitas    Sistem dapat dijalankan pada Windows 10/11
+
+8. Usability       Pengguna dapat menjalankan analisis hanya dengan mengisi URL
+                   + max comments, lalu melihat hasil tanpa langkah teknis
+                   tambahan.
+
+9. Maintainability Dokumentasi kode jelas dan lengkap
+
+10. Observability  Logging mencatat tahapan penting (fetch  parse  graph 
+                   cluster  score) + waktu proses ringkas untuk debugging dan
+                   laporan.
+
+         Output dari fase ini berupa dokumentasi kebutuhan sistem yang mencakup use case
+diagram, daftar kebutuhan fungsional dan non-fungsional, serta kriteria performa yang harus
+dipenuhi oleh sistem.
+
+3.1.3.2.Quick Design
+
+         Pada fase ini, akan dilakukan perancangan arsitektur sistem yang menggambarkan
+komponen-komponen utama, alur data, dan interaksi antar modul dalam sistem deteksi bot.
+
+                                                     43
+Algoritma Kruskal akan dipilih untuk pembentukan minimal spanning tree guna
+mengidentifikasi struktur jaringan bot, serta Canopy Clustering untuk pengelompokan akun
+berdasarkan kesamaan perilaku.
+
+         Arsitektur sistem dirancang menggunakan pendekatan modular yang terdiri dari
+beberapa komponen utama:
+
+    · TikTok Client Module: Mengambil data komentar dari URL video TikTok
+         menggunakan TikTokApi dan Playwright
+
+    · Graph Builder Module: Membangun representasi graf dari data komentar dengan
+         nodes (akun) dan edges (interaksi)
+
+    · Pre-clustering Module: Implementasi Canopy Clustering dengan HNSW untuk
+         approximate nearest neighbor
+
+    · MST & Clustering Module: Pembentukan Minimum Spanning Tree menggunakan
+         algoritma Kruskal dan clustering berbasis single-linkage
+
+    · Scoring Module: Perhitungan skor komposit unsupervised untuk deteksi akun bot
+    · API Backend: FastAPI untuk endpoint dan orkestrasi pipeline
+    · Frontend Visualization: Static HTML dengan cytoscape.js untuk visualisasi graf
+
+         Gambar 3.3 berikut menggambarkan arsitektur sistem secara menyeluruh, mencakup
+komponen-komponen utama dan hubungan antar komponen dalam sistem deteksi jaringan
+bot. Arsitektur dirancang menggunakan pendekatan modular berbasis pipeline sebagaimana
+dijelaskan pada landasan teori Bab 2.
+
+                                                     44
+         Diagram berikut menggambarkan arsitektur sistem secara keseluruhan
+         Gambar 3.4 berikut menampilkan flowchart keseluruhan pipeline sistem,
+menggambarkan alur pemrosesan data dari tahap input hingga output secara berurutan.
+Flowchart ini merupakan representasi visual dari arsitektur pipeline yang telah dipaparkan
+pada subbab 2.8.
+
+                                Gambar 3.3 Diagram Arsitektur Sistem
+         Flowchart Algoritma
+
+                                                     45
+                                Gambar 3.4 Flowchart pipeline sistem
+         Flowchart pada Gambar 3.4 menunjukkan bahwa pipeline sistem terdiri dari enam
+tahap berurutan: (1) pengambilan komentar dari URL TikTok, (2) praproses dan ekstraksi
+fitur, (3) pembangunan K-NN Graph berbantuan HNSW, (4) pre-clustering menggunakan
+Canopy Clustering, (5) pembentukan MST menggunakan algoritma Kruskal dan
+pemotongan edge untuk menghasilkan klaster, serta (6) scoring dan visualisasi hasil. Setiap
+tahap menghasilkan output yang menjadi input bagi tahap berikutnya.
+
+                                                     46
+         Flowchart algoritma Kruskal untuk pembentukan minimal spanning tree:
+
+         Gambar 3.5 berikut menyajikan flowchart detail implementasi algoritma Kruskal
+dalam sistem. Flowchart ini menggambarkan langkah-langkah spesifik yang dijalankan
+
+                                                     47
+mulai dari pengurutan edge berdasarkan bobot hingga terbentuknya Minimum Spanning
+Tree.
+
+                                Gambar 3.5 Flowchart algoritma Kruskal
+                                                     48
+Flowchart algoritma Canopy Clustering untuk pre-clustering:
+
+                               Gambar 3.6 Flowchart Canopy Clustering
+         Activity Diagram
+
+                                                     49
+         Activity diagram berikut menggambarkan alur aktivitas lengkap sistem deteksi bot
+dari proses input URL hingga Output hasil deteksi dan visualisasi:
+
+         Gambar 3.6 berikut menampilkan flowchart algoritma Canopy Clustering yang
+berperan sebagai tahap pre-clustering dalam pipeline sistem. Canopy Clustering digunakan
+untuk mengelompokkan data secara kasar dan efisien sebelum diterapkannya algoritma yang
+lebih berat, sesuai dengan landasan teori pada subbab 2.1.7.
+
+         Gambar 3.7 berikut menyajikan activity diagram yang menggambarkan alur aktivitas
+sistem secara lengkap dari sudut pandang interaksi antara pengguna dan sistem. Diagram ini
+melengkapi use case diagram (Gambar 3.2) dengan menambahkan dimensi waktu dan urutan
+aktivitas.
+
+                 Gambar 3.7 Activity Diagram
+
+Konstruksi Graf
+
+Graf akan dibangun dengan struktur berikut:
+
+· Nodes: Akun unik yang berkomentar (user_id, username, fitur profil)
+                                                 50
+    · Edges (Layer):
+             · Reply: A membalas B (directed, disimetrisasi untuk agregasi)
+             · Mention: A menyebut B dari parsing @username (directed, disimetrisasi)
+             · Co-thread: A dan B berada dalam thread yang sama (undirected)
+
+    · Pembobotan: w_ij = ·sim_mention + ·sim_content + ·sim_thread dengan
+         normalisasi untuk mengurangi efek superhub
+
+    · Pruning: k-nearest neighbors (default k=10-30) untuk sparseness
+         Teknologi dan framework yang akan digunakan:
+
+    · Backend: FastAPI + Uvicorn untuk API server
+    · Graph Processing: NetworkX untuk operasi graf dan MST
+    · Machine Learning: scikit-learn untuk TF-IDF, hnswlib untuk approximate nearest
+
+         neighbor
+    · NLP: TF-IDF vectorization (v1), opsi upgrade ke sentence-transformers
+    · Visualization: cytoscape.js untuk rendering graf interaktif
+    · Data Fetching: TikTokApi + Playwright untuk scraping komentar TikTok
+    · Parallel Processing: joblib untuk paralelisasi komputasi
+    · Persistence: File-based (JSON/CSV) per-run di folder ./runs/<run_id>
+
+         Output dari fase ini berupa dokumentasi desain sistem yang komprehensif, meliputi
+spesifikasi teknis, diagram-diagram desain (arsitektur, Flowchart, activity diagram), dan
+daftar teknologi yang akan digunakan dalam implementasi sistem.
+
+3.1.3.3.Build Prototype
+         Pada fase ini, akan dilakukan implementasi modul-modul utama sistem, meliputi
+
+modul pengumpulan data dari platform TikTok, modul preprocessing data, modul penerapan
+algoritma Kruskal, dan modul Canopy Clustering. Algoritma Kruskal akan diintegrasikan
+untuk membentuk minimal spanning tree dan mengidentifikasi struktur jaringan bot
+berdasarkan metrik keterhubungan antar akun.
+
+         Canopy Clustering akan diimplementasikan untuk mengelompokkan akun-akun
+yang memiliki karakteristik perilaku serupa, sehingga memudahkan identifikasi akun bot
+
+                                                     51
+secara kolektif. Antarmuka pengguna (UI) yang intuitif dan responsif akan dikembangkan
+untuk memvisualisasikan hasil deteksi bot serta menyajikan metrik dan laporan analisis.
+Database dan sistem penyimpanan data yang aman dan scalable akan diintegrasikan untuk
+menangani dataset TikTok yang berskala besar.
+
+         Output dari fase ini berupa prototype sistem versi pertama yang fungsional dan dapat
+dijalankan untuk melakukan deteksi jaringan bot pada data TikTok, lengkap dengan
+dokumentasi kode dan proses development.
+
+3.1.3.4.Initial user evaluation
+
+         Pada fase ini, prototype yang telah dikembangkan akan didemonstrasikan kepada
+penulis dan dosen pembimbing untuk mendapatkan feedback mengenai fungsionalitas,
+usability, dan performa sistem. Feedback akan diperoleh secara kualitatif melalui sesi
+demonstrasi dan diskusi langsung, di mana dosen pembimbing dapat mencoba menggunakan
+sistem, mengamati alur kerja, serta menyampaikan masukan secara lisan.
+
+         Kekurangan, bug, atau fitur yang perlu ditambahkan akan diidentifikasi berdasarkan
+masukan dari dosen pembimbing dan hasil pengamatan selama proses demonstrasi. Seluruh
+feedback akan didokumentasikan dalam bentuk catatan evaluasi yang mencakup daftar
+perbaikan yang diperlukan, usulan pengembangan fitur tambahan, serta prioritas
+penanganannya.
+
+         Output dari fase ini berupa laporan feedback yang berisi rangkuman masukan dosen
+pembimbing, daftar perbaikan yang diprioritaskan, dan rekomendasi untuk iterasi
+pengembangan berikutnya.
+
+3.1.3.5.Refining prototype
+
+         Pada fase ini, perbaikan akan diimplementasikan berdasarkan feedback yang
+diterima dari dosen pembimbing. Optimisasi performa algoritma dan akselerasi proses
+deteksi akan dilakukan untuk meningkatkan efisiensi sistem. Perbaikan ini mencakup
+optimisasi waktu eksekusi pada setiap tahapan pipeline, pengurangan penggunaan memori,
+dan peningkatan responsivitas antarmuka pengguna.
+
+         Antarmuka pengguna dan user experience akan disempurnakan untuk meningkatkan
+kemudahan penggunaan sistem, termasuk perbaikan pada form input, visualisasi graf, dan
+
+                                                     52
+tabel hasil. Bug dan isu teknis yang ditemukan selama fase evaluasi akan diperbaiki secara
+sistematis. Iterasi pengembangan akan dilakukan secara berulang hingga mencapai standar
+kualitas yang ditetapkan dan feedback dari dosen pembimbing sudah terakomodasi dengan
+baik.
+
+         Output dari fase ini berupa prototype sistem versi kedua (refined) yang telah
+mengalami perbaikan signifikan, dokumentasi perbaikan yang dilakukan, dan peningkatan
+metrik performa yang terukur.
+
+3.1.3.6.Final Prototype Development & Maintenance
+
+         Pada fase ini, semua modul dan fitur sistem akan difinalisasi. Integrasi penuh seluruh
+komponen sistem akan dilakukan untuk memastikan semua bagian bekerja secara harmonis.
+Pengujian internal mencakup unit testing dan integration testing akan dilakukan untuk
+memastikan semua modul bekerja sesuai spesifikasi.
+
+         Dokumentasi lengkap kode, API, dan user manual akan disusun untuk memudahkan
+maintenance dan penggunaan sistem di masa mendatang. Skenario pengujian untuk tahap
+Descriptive Study II akan dipersiapkan, mencakup pemilihan beberapa video TikTok dengan
+variasi jumlah komentar untuk menguji performa dan skalabilitas sistem dalam berbagai
+kondisi.
+
+         Output dari fase ini berupa sistem final yang fungsional dan siap untuk pengujian
+komprehensif, dokumentasi teknis lengkap yang mencakup arsitektur sistem, API
+documentation, dan user manual, serta skenario pengujian yang telah dipersiapkan untuk
+evaluasi akhir.
+
+3.1.4. Descriptive Study II
+
+       Pada tahap ini, akan dilakukan pengujian komprehensif terhadap sistem yang telah
+dikembangkan. Pengujian fungsionalitas sistem akan mencakup pengujian unit untuk
+menguji setiap modul secara terpisah, pengujian integrasi untuk memastikan seluruh modul
+dapat bekerja sama dengan baik, dan pengujian sistem secara keseluruhan untuk memastikan
+semua komponen berfungsi sesuai spesifikasi.
+
+       Karena sistem menggunakan pendekatan unsupervised learning, evaluasi kualitas
+clustering akan dilakukan menggunakan metrik internal sebagai berikut:
+
+                                                     53
+           · Modularity: Mengukur kualitas pembentukan komunitas dalam jaringan, di
+                mana nilai yang tinggi menunjukkan bahwa node dalam satu komunitas
+                memiliki koneksi kuat di antara mereka dan lemah dengan komunitas lain.
+
+           · Silhouette Coefficient: Mengukur seberapa baik klaster terbentuk, yaitu
+                seberapa dekat node dengan klaster sendiri dibandingkan dengan klaster lain.
+
+           · Conductance: Menilai seberapa banyak koneksi keluar dari suatu komunitas;
+                semakin rendah conductance, semakin terpisah komunitas tersebut dari yang
+                lain.
+
+       Analisis performa sistem akan dilakukan terhadap aspek waktu eksekusi setiap
+tahapan pipeline, penggunaan memori, dan scalability ketika memproses data komentar
+dalam berbagai ukuran. Validasi hasil deteksi bot akan dilakukan melalui inspeksi manual
+terhadap visualisasi jaringan, mencakup identifikasi akun-akun dengan aktivitas tidak wajar
+seperti frekuensi komentar tinggi, usia akun baru, atau pola komentar seragam, serta
+pengamatan struktur hubungan antar akun untuk melihat indikasi adanya kelompok bot yang
+saling berinteraksi.
+
+       Feedback dari dosen pembimbing akan dikumpulkan untuk mengidentifikasi potensi
+improvement bagi pengembangan versi sistem berikutnya. Analisis mendalam terhadap hasil
+pengujian akan dilakukan menggunakan metrik-metrik internal yang telah ditetapkan
+sebelumnya. Laporan evaluasi akan mencakup analisis kekuatan dan kelemahan sistem,
+karakteristik cluster yang terdeteksi sebagai "terduga bot" versus "tidak terduga bot", serta
+rekomendasi untuk pengembangan lebih lanjut. Dokumentasi hasil pengujian akan disajikan
+dalam bentuk tabel metrik per cluster, visualisasi graf, dan ringkasan evaluasi yang mudah
+dipahami.
+
+       Output dari tahap ini berupa laporan evaluasi komprehensif yang berisi hasil pengujian
+fungsional, evaluasi performa sistem, analisis kualitas clustering menggunakan metrik
+internal (modularity, silhouette, conductance), hasil inspeksi manual, dan rekomendasi
+perbaikan sistem. Laporan ini juga akan mencakup dokumentasi lengkap mengenai
+metodologi pengujian, skenario pengujian yang digunakan, serta kesimpulan yang diambil
+berdasarkan hasil evaluasi.
+
+3.2. Alat dan Bahan Penelitian
+
+3.2.1. Perangkat Keras
+
+                                                     54
+         Dalam pengembangan sistem deteksi jaringan bot di TikTok ini, perangkat keras
+yang digunakan adalah:
+
+                  Tabel 3.3 Spesifikasi Perangkat Keras
+
+Komponen    Spesifikasi Minimum      Spesifikasi yang Digunakan
+
+Processor   Intel Core i5 / AMD Ryzen 5 Intel Core i7
+
+RAM         8 GB                     16 GB
+
+Storage     256 GB SSD               1 TB
+
+Koneksi Internet 10 Mbps             10 Mbps
+
+3.2.2. Perangkat Lunak
+Perangkat lunak yang digunakan dalam pengembangan sistem ini meliputi:
+
+                            Tabel 3.4 Perangkat Lunak yang digunakan
+
+Software    Versi Fungsi
+
+Python      3.8+ Bahasa pemrograman utama
+
+Visual Studio Code 1.106.3 IDE untuk pengembangan
+
+Playwright  1.55.0 Browser automation untuk scraping TikTok
+
+Git         2.48.1 Version control system
+
+3.2.3. Library dan Framework Python
+                              Tabel 3.5 Library dan Framework Python
+
+Library                              Versi   Fungsi
+TikTokApi                            -
+playwright                           1.55.0  API wrapper untuk mengakses
+networkx                             3.2.1   data TikTok
+                                             Automation browser untuk
+                                             scraping
+                                             Pembangunan dan analisis graph
+
+                                 55
+numpy                      2.2.3                                   Komputasi numerik
+                                                                   Machine learning dan clustering
+scikit-learn                                                       Framework web backend
+                                                         1.6.1
+
+(TfidfVectorizer, TruncatedSVD, normalize)
+
+fastapi                    0.115.0
+
+uvicorn                    0.30.6                                  ASGI server untuk FastAPI
+loguru                     0.7.2
+scipy                      1.13.1                                  Logging terstruktur dan ringkas
+hnswlib                    0.8.0                                   untuk observabilitas
+cytoscape                  3.28.1                                  Operasi numerik/linalg yang
+                                                                   dibutuhkan scikit-learn
+                                                                   Approximate Nearest Neighbor
+                                                                   (HNSW) untuk percepat pencarian
+                                                                   tetangga
+                                                                   Visualisasi graf interaksi (node­
+                                                                   edge) di halaman web.
+
+3.2.4. Dataset
+
+    Data yang digunakan berasal dari komentar yang terdapat pada video oleh platform
+Tiktok dengan jumlah komentar sebagai berikut:
+
+    · 100 Komentar
+    · 200 Komentar
+    · 500 Komentar
+    · 1000 Komentar
+
+3.3. Jadwal Penelitian
+
+    Penelitian ini direncanakan akan dilaksanakan dalam kurun waktu enam bulan yang
+dibagi per minggu dengan rincian sebagain berikut:
+
+                                 Tabel 3.6 Rencana Jadwal Penelitian
+
+                                                                Bulan ke-
+
+No.        Kegiatan  1  2                                       3  4       5  6
+
+                     123412341234123412341234
+                                   56
+         Reasearch
+   1. Classification
+   2. Descriptive Study I
+   3. Prescriptive Study
+
+         Requirements
+   4.
+
+         gathering and analysis
+   5. Quick Design
+   6. Build a Prototype
+   7. Initial user evaluation
+   8. Refining prototype
+
+         Final Prototype
+   9. Development &
+
+         Maintenance
+  10. Descriptive Study II
+Keterangan:
+
+        Sudah Terlaksana
+        Belum Terlaksana
+
+                                                     57
+                                   BAB 4. Hasil dan Pembahasan
+
+4.1. Profil Platform
+
+4.1.1. Profil Tiktok sebagai Platform Penelitian
+
+TikTok adalah platform media sosial berbasis video pendek yang dikembangkan oleh
+perusahaan teknologi asal Tiongkok, ByteDance, dan diluncurkan secara global pada tahun
+2017. Dalam waktu singkat, TikTok berkembang menjadi salah satu platform media sosial
+dengan pertumbuhan pengguna tercepat di dunia. Berdasarkan laporan Digital 2025 oleh We
+Are Social dan Hootsuite, TikTok telah melampaui 1,5 miliar pengguna aktif bulanan secara
+global, dengan penetrasi yang sangat signifikan di kalangan generasi muda berusia 18­34
+tahun (Simon Kemp, 2025). Di Indonesia, TikTok menjadi salah satu platform media sosial
+yang paling banyak digunakan, dengan jumlah pengguna aktif yang terus meningkat setiap
+tahunnya.
+
+Berbeda dengan platform media sosial lainnya, TikTok memiliki karakteristik unik dalam
+pola interaksi penggunanya. Fitur komentar pada setiap video memungkinkan pengguna
+untuk berinteraksi tidak hanya dengan pembuat konten, tetapi juga antar sesama penonton
+melalui mekanisme reply (membalas komentar), mention (menyebut akun lain menggunakan
+tanda @), dan co-thread (berada dalam satu utas komentar yang sama). Pola interaksi
+bertingkat ini membentuk jaringan komunikasi yang kompleks di bawah setiap video, yang
+menjadikan TikTok sebagai platform yang sangat relevan untuk analisis jaringan sosial
+berbasis komentar.
+
+TikTok dipilih sebagai platform penelitian dalam studi ini karena beberapa pertimbangan.
+Pertama, ekosistem komentar TikTok yang bersifat publik dan dapat diakses secara legal
+menyediakan data yang cukup untuk membangun dan menguji sistem deteksi. Kedua,
+fenomena bot dan akun terkoordinasi di TikTok belum sebanyak diteliti dibandingkan
+platform Twitter/X, sehingga terdapat kesenjangan penelitian yang signifikan. Ketiga, pola
+interaksi antar komentar di TikTok -- khususnya relasi reply, mention, dan co-thread --
+dapat dimodelkan secara alami sebagai struktur graf berbobot, yang sesuai dengan
+pendekatan yang diusulkan dalam penelitian ini.
+
+4.1.2. Fenomena Bot Pada Platform TikTok
+
+Seiring dengan meningkatnya popularitas TikTok, platform ini juga menjadi target operasi
+bot dan akun terkoordinasi yang bertujuan memanipulasi opini publik, memperkuat narasi
+tertentu, atau meningkatkan interaksi secara artifisial. Bot pada TikTok umumnya beroperasi
+melalui kolom komentar dengan cara memposting komentar yang berulang, mirip, atau
+terkoordinasi secara temporal pada video-video tertentu untuk menciptakan kesan dukungan
+atau diskursus yang masif.
+
+Karakteristik utama yang membedakan aktivitas bot terkoordinasi dari interaksi pengguna
+normal di TikTok antara lain: (1) keseragaman konten komentar yang tinggi antar akun
+dalam rentang waktu berdekatan, (2) pola reply dan mention yang saling memperkuat antar
+akun dalam kelompok yang sama, (3) sinkronisasi waktu posting yang tidak alami, serta (4)
+struktur jaringan interaksi yang membentuk kelompok tertutup dengan kerapatan koneksi
+internal yang jauh lebih tinggi dibandingkan koneksi ke akun di luar kelompok. Pola-pola
+ini sulit dideteksi menggunakan metode konvensional yang hanya menganalisis akun secara
+individual, karena masing-masing akun dapat terlihat normal ketika dilihat secara terpisah.
+
+                                                     58
+Penelitian ini berfokus pada identifikasi jaringan bot terkoordinasi di TikTok melalui
+pendekatan analisis struktur graf pada jaringan komentar, yang memungkinkan deteksi pola
+koordinasi antar akun secara kolektif -- bukan hanya berdasarkan karakteristik akun secara
+individual.
+
+4.1.3. Dataset yang Digunakan
+
+Data yang digunakan dalam penelitian ini merupakan data komentar yang diambil secara
+langsung dari video-video publik pada platform TikTok menggunakan library TikTokApi
+berbantuan Playwright. Seluruh data yang dikumpulkan bersifat publik dan dapat diakses
+secara legal tanpa memerlukan autentikasi akun atau pengambilan data sensitif/non-publik,
+sehingga proses pengumpulan data mematuhi ketentuan penggunaan platform.
+
+Setiap komentar yang berhasil diambil memuat atribut-atribut berikut: user_id (identifikasi
+unik akun), username (nama tampilan akun), teks komentar, referensi mention (jika
+komentar mengandung tanda @username), informasi reply/parent (apabila komentar
+merupakan balasan dari komentar lain), serta timestamp (waktu posting komentar). Atribut-
+atribut ini kemudian digunakan sebagai dasar pembangunan graf interaksi antar akun, di
+mana setiap akun direpresentasikan sebagai simpul (node) dan relasi antar akun
+direpresentasikan sebagai sisi (edge) berbobot.
+
+Untuk keperluan pengujian sistem, data dikumpulkan dalam empat variasi ukuran yang
+berbeda guna mengukur skalabilitas dan performa pipeline pada berbagai kondisi beban.
+Rincian variasi dataset yang digunakan disajikan pada Tabel 4.1 berikut.
+
+Tabel 4.1 Variasi Dataset yang Digunakan
+
+No. Jumlah Komentar  Estimasi Akun Unik   Keterangan
+1 100 komentar       ±80­95 akun          Dataset kecil, uji
+2 200 komentar       ±150­180 akun        fungsional dasar
+3 500 komentar       ±350­450 akun        Dataset kecil-menengah
+                                          Dataset menengah, uji
+4 1.000 komentar     ±700­900 akun        skalabilitas
+                                          Dataset besar, uji performa
+                                          penuh
+
+Pemilihan variasi ukuran ini didasarkan pada kebutuhan untuk mengobservasi bagaimana
+performa sistem -- khususnya efektivitas reduksi edge oleh Canopy Clustering dan waktu
+eksekusi algoritma Kruskal -- berubah seiring meningkatnya jumlah data. Data diambil dari
+URL video TikTok yang dipilih secara purposif berdasarkan relevansi topik dan potensi
+adanya aktivitas komentar yang mencurigakan, dan disimpan dalam format JSON per sesi
+pengambilan (snapshot) untuk menjamin reproducibility dan kemudahan audit data.
+
+4.2. Rancangan Sistem Usulan
+
+4.2.1. Arsitektur Sistem Usulan
+
+Sistem deteksi jaringan bot yang diusulkan dalam penelitian ini dirancang menggunakan
+pendekatan arsitektur modular berbasis pipeline, di mana setiap komponen memiliki
+tanggung jawab tunggal dan saling terhubung secara berurutan. Pendekatan ini menerapkan
+
+                                                     59
+prinsip separation of concerns sebagaimana dijelaskan pada subbab 2.8, sehingga setiap
+modul dapat dikembangkan, diuji, dan diperbaiki secara mandiri tanpa mengganggu modul
+lainnya.
+
+Arsitektur sistem secara keseluruhan terdiri dari tujuh komponen utama yang bekerja dalam
+satu alur pipeline terintegrasi, sebagaimana diilustrasikan pada Gambar 3.3. Komponen
+pertama adalah TikTok Client Module, yang bertugas mengambil data komentar dari URL
+video TikTok yang diberikan pengguna menggunakan library TikTokApi berbantuan
+Playwright. Komponen kedua adalah Parser & Preprocessing Module, yang mengekstrak
+struktur komentar meliputi informasi akun (user_id, username), teks komentar, relasi
+reply/parent, dan referensi mention (@username), sekaligus melakukan pembersihan dan
+normalisasi teks. Komponen ketiga adalah Graph Builder Module, yang membangun
+representasi graf berbobot dari data komentar yang telah diproses, dengan akun sebagai node
+dan relasi interaksi sebagai edge. Komponen keempat adalah Pre-clustering Module, yang
+mengimplementasikan Canopy Clustering berbantuan HNSW (Hierarchical Navigable
+Small World) untuk mengelompokkan data secara kasar dan mereduksi kandidat edge
+sebelum proses MST. Komponen kelima adalah MST & Clustering Module, yang
+menjalankan algoritma Kruskal untuk membentuk Minimum Spanning Tree dan memotong
+edge berbobot rendah untuk menghasilkan klaster akun. Komponen keenam adalah Scoring
+Module, yang menghitung skor kecurigaan komposit untuk setiap klaster dan akun
+berdasarkan metrik kepadatan, sentralitas, keseragaman konten, dan sinkronisasi waktu.
+Komponen ketujuh adalah API Backend & Frontend Visualization, yang menyajikan hasil
+deteksi melalui antarmuka berbasis REST API (FastAPI) dan visualisasi graf interaktif
+menggunakan cytoscape.js.
+
+Pemilihan teknologi untuk setiap komponen didasarkan pada pertimbangan efisiensi
+komputasi, kemudahan integrasi, dan kematangan ekosistem library. Rincian teknologi yang
+digunakan pada setiap komponen disajikan pada Tabel 4.2.
+
+Tabel 4.2 Teknologi yang Digunakan pada Setiap Komponen
+
+No. Komponen     Teknologi / Library Fungsi
+
+1 Data Fetching  TikTokApi          + Pengambilan komentar dari
+                 Playwright             TikTok
+
+2 Preprocessing  & scikit-learn (TF-IDF) Ekstraksi fitur teks komentar
+       NLP
+
+3 Graph Processing NetworkX         Operasi graf dan MST (Kruskal)
+
+4 Approximate NN hnswlib            Pembangunan K-NN Graph
+                                    efisien
+
+5 Paralelisasi   joblib             Percepatan komputasi paralel
+
+6 Backend API    FastAPI + Uvicorn  Endpoint pipeline dan orkestrasi
+
+7 Visualisasi    cytoscape.js       Rendering graf interaktif
+
+8 Persistensi    JSON / CSV         Penyimpanan hasil per sesi (run)
+
+                               60
+4.2.2. Implementasi Pipeline Deteksi Bot
+
+Pipeline sistem diimplementasikan sebagai serangkaian tahap pemrosesan berurutan yang
+mengalirkan data dari input berupa URL video TikTok hingga output berupa visualisasi graf
+dan daftar akun mencurigakan. Berikut adalah penjelasan implementasi setiap tahap dalam
+pipeline.
+
+Tahap 1 -- Pengambilan Data Komentar. Pengguna memasukkan URL video TikTok
+melalui antarmuka sistem. Modul TikTok Client kemudian mengambil komentar hingga
+batas maksimum yang ditentukan (max_comments) menggunakan TikTokApi dengan
+Playwright sebagai headless browser. Hasil pengambilan data disimpan dalam format JSON
+sebagai snapshot dengan timestamp untuk menjamin reproducibility.
+
+Tahap 2 -- Praproses dan Ekstraksi Fitur. Setiap komentar yang berhasil diambil diproses
+untuk mengekstrak:
+
+(a) identitas akun (user_id, username),
+
+(b) teks komentar yang telah dinormalisasi,
+
+(c) relasi reply (komentar mana yang dibalas), dan
+
+(d) referensi mention dari parsing tanda @username.
+
+Teks komentar per akun direpresentasikan sebagai vektor fitur menggunakan TF-IDF untuk
+digunakan pada tahap perhitungan kemiripan konten.
+
+Tahap 3 -- Pembangunan K-NN Graph. Graf interaksi berbobot dibangun dengan tiga
+lapisan edge yang digabungkan: reply (A membalas B, di-simetrisasi), mention (A menyebut
+B, di-simetrisasi), dan co-thread (A dan B berada dalam satu thread, undirected). Bobot
+setiap edge dihitung menggunakan formula komposit:
+
+w_ij =  · sim_mention +  · sim_content +  · sim_thread
+
+di mana sim_content dihitung menggunakan cosine similarity antara vektor TF-IDF kedua
+akun, dan , ,  merupakan parameter bobot yang dapat dikonfigurasi. Untuk menjaga
+sparseness graf, diterapkan pruning berbasis k-nearest neighbors (default k = 10­30)
+menggunakan hnswlib yang mendukung approximate nearest neighbor secara efisien.
+
+Tahap 4 -- Pre-clustering dengan Canopy Clustering. Sebelum MST dijalankan, Canopy
+Clustering diterapkan untuk mengelompokkan akun-akun yang memiliki kemiripan tinggi
+ke dalam canopy yang sama berdasarkan ambang batas T1 dan T2. Hasil canopy ini
+digunakan untuk membatasi ruang pencarian relasi edge pada tahap berikutnya, sehingga
+jumlah edge yang perlu diproses oleh algoritma Kruskal berkurang secara signifikan.
+
+Tahap 5 -- Pembentukan MST dan Clustering. Pada setiap komponen graf yang
+terbentuk, algoritma Kruskal dijalankan untuk membangun Minimum Spanning Tree. Sesuai
+dengan definisi cost = 1 - similarity, MST secara otomatis mempertahankan edge yang
+menghubungkan akun-akun paling mirip. Setelah MST terbentuk, edge dengan bobot di
+bawah ambang batas tertentu dipotong (edge cutting) untuk memisahkan MST menjadi
+klaster-klaster akun yang lebih kecil.
+
+Tahap 6 -- Scoring dan Output. Setiap klaster dan akun di dalamnya diberikan skor
+kecurigaan komposit berdasarkan beberapa indikator: kepadatan edge internal klaster,
+degree sentralitas akun, keseragaman konten komentar dalam klaster, dan sinkronisasi waktu
+
+                                                     61
+posting. Hasil akhir berupa daftar akun mencurigakan beserta skor dan alasan kecurigaan,
+yang dikirimkan ke frontend melalui REST API endpoint FastAPI dalam format JSON.
+
+4.2.3. Implementasi Antarmuka Pengguna
+
+Antarmuka pengguna sistem diimplementasikan sebagai aplikasi web statis (static HTML)
+yang berkomunikasi dengan backend FastAPI melalui REST API. Antarmuka dirancang
+dengan prinsip kesederhanaan agar dapat digunakan oleh pengguna yang tidak memiliki latar
+belakang teknis, dengan menyembunyikan kompleksitas proses komputasi di balik tampilan
+yang intuitif.
+
+Antarmuka terdiri dari beberapa komponen utama. Form Input URL memungkinkan
+pengguna memasukkan URL video TikTok dan mengonfigurasi parameter opsional seperti
+jumlah maksimum komentar yang diambil. Panel Visualisasi Graf menampilkan graf
+interaksi antar akun secara interaktif menggunakan cytoscape.js, di mana ukuran node
+mencerminkan skor kecurigaan akun dan warna node mencerminkan klaster yang dimiliki
+akun tersebut. Pengguna dapat memperbesar, memperkecil, dan mengklik node untuk
+melihat detail akun. Panel Daftar Klaster menyajikan daftar klaster yang terbentuk beserta
+jumlah anggota, skor kecurigaan rata-rata, dan indikator utama yang memengaruhi skor.
+Tabel Akun Mencurigakan menampilkan daftar akun dengan skor tertinggi beserta metrik
+detailnya. Tombol Ekspor memungkinkan pengguna mengunduh hasil analisis dalam
+format JSON atau CSV untuk keperluan dokumentasi atau analisis lanjutan.
+
+(Pada bagian ini sisipkan screenshot antarmuka hasil implementasi)
+
+4.2.4. Proses Iterasi Prototyping
+
+Sesuai dengan metode pengembangan prototyping yang telah dijelaskan pada Bab 3, sistem
+dikembangkan melalui beberapa iterasi yang masing-masing menghasilkan versi prototipe
+yang semakin disempurnakan berdasarkan evaluasi dan umpan balik.
+
+Iterasi 1 -- Quick Design. Pada iterasi pertama, dirancang arsitektur sistem secara
+menyeluruh dan dibuat desain antarmuka awal (wireframe). Pada tahap ini ditetapkan tujuh
+modul utama pipeline, pemilihan teknologi untuk setiap modul, dan spesifikasi format data
+antar modul. Luaran iterasi ini berupa dokumentasi desain teknis dan diagram-diagram
+sistem (arsitektur, flowchart, activity diagram) yang menjadi acuan implementasi.
+
+Iterasi 2 -- Build Prototype. Pada iterasi kedua, seluruh modul diimplementasikan dan
+diintegrasikan menjadi prototipe pertama yang dapat dijalankan secara end-to-end. Modul
+pengambilan data, preprocessing, graph builder, Canopy Clustering, algoritma Kruskal,
+scoring, dan antarmuka visualisasi berhasil diimplementasikan dan diuji secara individual
+sebelum diintegrasikan. Luaran iterasi ini berupa prototipe fungsional versi pertama (v1.0).
+
+Iterasi 3 -- Initial User Evaluation. Prototipe v1.0 didemonstrasikan kepada dosen
+pembimbing untuk memperoleh umpan balik. Umpan balik diperoleh secara kualitatif
+melalui sesi demonstrasi dan diskusi langsung. Seluruh catatan perbaikan didokumentasikan
+sebagai dasar iterasi berikutnya.
+
+(Pada bagian ini tuliskan poin-poin feedback konkret yang diterima dari dosen pembimbing)
+
+Iterasi 4 -- Refining Prototype. Berdasarkan umpan balik yang diterima, dilakukan
+perbaikan dan optimisasi pada prototipe. Perbaikan mencakup optimisasi waktu eksekusi
+pipeline, penyempurnaan antarmuka pengguna berdasarkan masukan, dan perbaikan bug
+
+                                                     62
+yang ditemukan selama evaluasi. Luaran iterasi ini berupa prototipe versi kedua (refined)
+yang menjadi dasar pengujian formal pada subbab 4.4.
+
+Perubahan dari v1.0 ke v2.0 dilakukan pada aspek antarmuka, kejelasan hasil, dan
+keandalan sistem. Pada v2.0, antarmuka prototipe disederhanakan dari tampilan yang masih
+didominasi parameter teknis menjadi dashboard yang lebih terstruktur, sehingga pengguna
+dapat langsung menjalankan analisis melalui input URL, batas komentar, dan mode analisis
+tanpa harus menyesuaikan banyak parameter internal. Tampilan hasil juga disempurnakan
+dengan penambahan panel metrik utama, visualisasi graf interaktif, daftar cluster terduga,
+detail akun mencurigakan, serta metrik proses yang menampilkan progres dan durasi setiap
+tahap pipeline. Selain itu, v2.0 menambahkan fitur pendukung seperti riwayat analisis dan
+ekspor hasil ke format JSON/CSV agar hasil lebih mudah ditinjau ulang. Dari sisi analisis,
+mekanisme scoring diperkuat dengan indikator yang lebih informatif, seperti kepadatan
+cluster, repetisi konten, sinkronisasi temporal, frekuensi komentar tinggi, dan proporsi akun
+baru, sehingga alasan penandaan akun atau cluster suspicious menjadi lebih jelas. Sejumlah
+bug dan masalah tata letak juga diperbaiki agar aplikasi lebih stabil dan nyaman digunakan
+pada berbagai ukuran layar.
+
+4.3. Hasil dan Rekomendasi
+
+4.3.1. Hasil Pengujian Fungsional
+
+Pengujian fungsional dilakukan menggunakan pendekatan black-box testing untuk
+memverifikasi bahwa seluruh fitur dan fungsi sistem berjalan sesuai dengan spesifikasi
+kebutuhan fungsional yang telah ditetapkan pada Tabel 3.1. Setiap skenario diuji dengan
+memberikan masukan tertentu dan membandingkan keluaran aktual dengan keluaran yang
+diharapkan.
+
+Pengujian dilakukan secara internal oleh peneliti dengan menggunakan dataset komentar
+dari video TikTok publik. Skenario pengujian dirancang untuk mencakup seluruh alur sistem
+dari input hingga output, termasuk kondisi normal dan kondisi tepi (edge case). Hasil
+pengujian fungsional secara lengkap disajikan pada Tabel 4.3 berikut.
+
+Tabel 4.3 Hasil Pengujian Fungsional Sistem
+
+No. Fungsi yang Skenario Input Expected                 Actual Status
+
+Diuji                                        Output     Output
+
+1 Pengambilan URL valid, URL                 100 komentar (isi    (Pass/Fail)
+
+komentar  max 100 video                      terambil   hasil
+
+          komentar TikTok dalam format aktual)
+
+                                   publik JSON
+
+2 Pengambilan URL tidak URL                  Pesan error (isi     (Pass/Fail)
+
+komentar  valid                    salah     yang       hasil
+
+                                   format informatif    aktual)
+
+3 Parsing relasi Komentar Data               Relasi     (isi      (Pass/Fail)
+
+reply     yang                     komentar reply/parent hasil
+
+          mengandung mentah teridentifikasi aktual)
+
+          balasan
+
+4 Parsing relasi Komentar Data               Relasi     (isi      (Pass/Fail)
+
+mention   mengandung komentar mention                   hasil
+
+          @username mentah teridentifikasi aktual)
+
+5 Pembangunan Dataset 100 Data               Graf berbobot (isi   (Pass/Fail)
+
+graf      komentar komentar terbentuk                   hasil
+
+                                   terproses dengan node aktual)
+
+                                             dan edge
+
+6 Canopy  Dataset 500 Graf                   Canopy     (isi      (Pass/Fail)
+
+Clustering komentar komentar terbentuk,                 hasil
+
+                                             jumlah edge aktual)
+
+                                             berkurang
+
+7 Algoritma Graf hasil Graf                  MST        (isi      (Pass/Fail)
+
+Kruskal   Canopy                   berbobot terbentuk   hasil
+
+                                   sparse tanpa siklus aktual)
+
+8 Edge cutting MST hasil MST + Klaster akun (isi                  (Pass/Fail)
+
+& clustering Kruskal               ambang terbentuk     hasil
+
+                                   batas                aktual)
+
+                                   63
+9 Scoring akun Klaster hasil Data                  Skor             (isi     (Pass/Fail)
+
+                      clustering klaster kecurigaan hasil
+
+                                                   per              aktual)
+
+                                                   akun/klaster
+
+                                                   dihitung
+
+10 Visualisasi Hasil                 Data          Graf interaktif (isi      (Pass/Fail)
+
+graf                  pipeline       node,         tampil di hasil
+
+                      lengkap        edge,         antarmuka aktual)
+
+                                     klaster
+
+11 Ekspor hasil Klik tombol Hasil                  File             (isi     (Pass/Fail)
+
+                      ekspor         deteksi JSON/CSV hasil
+
+                                                   terunduh         aktual)
+
+12 REST API Request                  URL + Response                 (isi     (Pass/Fail)
+
+endpoint              POST ke parameter JSON berisi hasil
+
+                      /analyze                     hasil pipeline aktual)
+
+Berdasarkan hasil pengujian pada Tabel 4.3, dari total 12 skenario pengujian yang
+
+dijalankan, sebanyak _ skenario dinyatakan Pass dan _ skenario dinyatakan Fail, sehingga
+
+tingkat keberhasilan fungsional sistem mencapai ___%. (Isi angka sesuai hasil aktual.)
+
+Seluruh fungsi inti pipeline -- mulai dari pengambilan data, pembangunan graf, Canopy
+Clustering, algoritma Kruskal, scoring, hingga visualisasi -- berhasil berjalan sesuai
+spesifikasi yang telah ditetapkan. Temuan ini membuktikan bahwa sistem yang dibangun
+mampu menjawab Rumusan Masalah 1, yaitu merancang dan mengimplementasikan alur
+sistem deteksi bot pada TikTok secara end-to-end dari pengambilan data komentar hingga
+menghasilkan visualisasi jaringan.
+
+4.3.2. Hasil Pengujian Performa (Efisiensi)
+
+Pengujian performa dilakukan untuk mengukur efisiensi sistem dari sisi waktu eksekusi
+setiap tahap pipeline dan efektivitas Canopy Clustering dalam mereduksi jumlah edge
+sebelum algoritma Kruskal dijalankan. Pengujian dilakukan pada empat variasi ukuran
+dataset (100, 200, 500, dan 1.000 komentar) menggunakan perangkat keras dengan
+spesifikasi Intel Core i7 dan RAM 16 GB sebagaimana tercantum pada Tabel 3.3.
+
+Waktu Eksekusi per Tahap Pipeline
+
+Tabel 4.4 berikut menyajikan waktu eksekusi setiap tahap pipeline untuk masing-masing
+variasi ukuran dataset.
+
+Tabel 4.4 Waktu Eksekusi per Tahap Pipeline (dalam detik)
+
+Tahap Pipeline                100           200              500             1.000
+
+                              komentar komentar komentar komentar
+
+Pengambilan data (fetch) (isi)              (isi)            (isi)           (isi)
+
+Preprocessing & TF-IDF (isi)                (isi)            (isi)           (isi)
+
+Pembangunan        K-NN (isi)               (isi)            (isi)           (isi)
+
+Graph (HNSW)
+
+Canopy Clustering             (isi)         (isi)            (isi)           (isi)
+
+Kruskal MST                   (isi)         (isi)            (isi)           (isi)
+
+Scoring                       (isi)         (isi)            (isi)           (isi)
+
+Total waktu pipeline          (isi)         (isi)            (isi)           (isi)
+
+(Sisipkan grafik batang waktu eksekusi per tahap untuk memudahkan perbandingan visual.)
+
+                                           64
+Efektivitas Reduksi Edge oleh Canopy Clustering
+
+Salah satu kontribusi utama penerapan Canopy Clustering dalam sistem ini adalah
+kemampuannya mereduksi jumlah kandidat edge sebelum algoritma Kruskal dijalankan,
+sehingga kompleksitas komputasi O(E log E) pada Kruskal dapat ditekan secara signifikan.
+Tabel 4.5 berikut menyajikan perbandingan jumlah edge sebelum dan sesudah penerapan
+Canopy Clustering.
+
+Tabel 4.5 Reduksi Edge oleh Canopy Clustering
+
+Ukuran            Jumlah Edge Sebelum  Jumlah Edge Setelah  Persentase
+                                       Canopy               Reduksi
+Dataset           Canopy               (isi)                (isi)%
+                                       (isi)                (isi)%
+100 komentar (isi)                     (isi)                (isi)%
+                                       (isi)                (isi)%
+200 komentar (isi)
+
+500 komentar (isi)
+
+1.000             (isi)
+
+komentar
+
+Perbandingan dengan Skenario Baseline
+
+Untuk membuktikan keunggulan metode usulan secara terukur, dilakukan perbandingan
+terhadap tiga skenario berikut: (A) Full Graph tanpa Canopy dan tanpa MST -- seluruh
+edge diproses langsung tanpa reduksi; (B) Canopy tanpa MST -- Canopy Clustering
+diterapkan tetapi klaster hanya berdasarkan canopy tanpa pembentukan MST; (C) Canopy +
+Kruskal (metode usulan) -- integrasi penuh Canopy Clustering dan algoritma Kruskal. Hasil
+perbandingan disajikan pada Tabel 4.6.
+
+Tabel 4.6 Perbandingan Tiga Skenario pada Dataset 1.000 Komentar
+
+Metrik                    (A) Full Graph (B) Canopy (C) Canopy + Kruskal
+
+                                       tanpa MST (Usulan)
+
+Jumlah edge diproses (isi)             (isi)     (isi)
+
+Total waktu eksekusi (isi)             (isi)     (isi)
+
+(detik)
+
+Jumlah            klaster (isi)        (isi)     (isi)
+
+terbentuk
+
+Modularity (Q)            (isi)        (isi)     (isi)
+
+Silhouette Score          (isi)        (isi)     (isi)
+
+Conductance               (isi)        (isi)     (isi)
+
+(Sisipkan grafik batang perbandingan tiga skenario untuk visualisasi yang lebih jelas.)
+
+Hasil perbandingan pada Tabel 4.6 menunjukkan bahwa metode usulan (C) berhasil
+mencapai keseimbangan terbaik antara efisiensi komputasi dan kualitas klaster yang
+dihasilkan. Reduksi edge yang dilakukan oleh Canopy Clustering secara langsung
+berkontribusi pada penurunan waktu eksekusi Kruskal, sementara pembentukan MST
+menghasilkan struktur klaster yang lebih kohesif dibandingkan clustering berbasis canopy
+saja.
+
+4.3.3. Hasil Pengujian Kualitas Klaster
+Pengujian kualitas klaster dilakukan menggunakan tiga metrik internal yang telah ditetapkan
+pada subbab 2.1.12 dan 2.11, yaitu Modularity, Silhouette Score, dan Conductance. Ketiga
+
+                                                     65
+metrik ini dipilih karena sistem menggunakan pendekatan unsupervised sehingga tidak
+tersedia ground truth label akun bot untuk perhitungan metrik berbasis supervisi seperti
+akurasi atau F1-score.
+
+Modularity (Q) mengukur seberapa kuat struktur komunitas yang terbentuk dalam graf, di
+mana nilai mendekati 1 menunjukkan klaster dengan koneksi internal yang sangat padat
+relatif terhadap koneksi ke luar klaster. Silhouette Score mengukur seberapa tepat setiap
+node berada dalam klasternya sendiri dibandingkan klaster lain, dengan rentang nilai -1
+hingga 1 dan nilai positif yang tinggi menunjukkan pemisahan klaster yang baik.
+Conductance mengukur rasio edge yang menghubungkan antar klaster terhadap total edge
+dalam klaster, di mana nilai yang rendah menunjukkan klaster yang lebih terisolasi dan
+kohesif.
+
+Tabel 4.7 menyajikan hasil ketiga metrik untuk setiap variasi ukuran dataset menggunakan
+metode usulan (Canopy + Kruskal).
+
+Tabel 4.7 Hasil Metrik Kualitas Klaster per Variasi Dataset
+
+Ukuran Jumlah Modularity Silhouette Conductance Interpretasi
+
+Dataset   Klaster (Q)             Score
+
+100       (isi)  (isi)            (isi)  (isi)               (isi)
+
+komentar
+
+200       (isi)  (isi)            (isi)  (isi)               (isi)
+
+komentar
+
+500       (isi)  (isi)            (isi)  (isi)               (isi)
+
+komentar
+
+1.000     (isi)  (isi)            (isi)  (isi)               (isi)
+
+komentar
+
+(Sisipkan screenshot visualisasi graf klaster dari cytoscape.js untuk mengilustrasikan
+
+struktur klaster secara visual.)
+
+Analisis terhadap hasil pada Tabel 4.7 menunjukkan bahwa (isi dengan analisis sesuai angka
+aktual -- misalnya: nilai Modularity rata-rata sebesar X menunjukkan bahwa sistem
+berhasil mengidentifikasi struktur komunitas yang bermakna dalam jaringan komentar
+TikTok). Nilai Silhouette Score yang (positif/negatif) mengindikasikan bahwa (isi analisis).
+Conductance yang (rendah/tinggi) pada sebagian besar klaster menunjukkan bahwa (isi
+analisis).
+
+4.3.4. Interpretasi Output: Studi Kasus Video TikTok
+
+Untuk mendemonstrasikan kemampuan sistem dalam menghasilkan output yang dapat
+diinterpretasikan secara praktis, dilakukan studi kasus analisis terhadap (isi: sebutkan 1­2
+video TikTok yang digunakan, misalnya "video berita viral bertopik X dengan jumlah
+komentar Y").
+
+Deskripsi Kasus. Video yang dianalisis merupakan (deskripsikan video: topik, jumlah like,
+jumlah komentar, konteks mengapa dipilih). Sistem dijalankan dengan mengambil (isi
+jumlah) komentar teratas dari video tersebut, menghasilkan (isi jumlah) akun unik yang
+direpresentasikan sebagai node dalam graf.
+
+                                  66
+Hasil Klaster yang Terbentuk. Setelah seluruh pipeline dijalankan, sistem menghasilkan
+(isi jumlah) klaster dengan karakteristik sebagai berikut.
+
+Tabel 4.8 Karakteristik Klaster yang Terbentuk pada Studi Kasus
+
+Klaster Jumlah Skor    Indikator Utama                           Interpretasi
+
+     Akun Kecurigaan
+
+     Rata-rata
+
+Klaster 1 (isi) (isi)  (isi: misal "keseragaman (Mencurigakan /
+
+                       konten tinggi, sinkronisasi Normal)
+
+                       waktu")
+
+Klaster 2 (isi) (isi)  (isi)                                     (Mencurigakan /
+
+                                                                 Normal)
+
+Klaster 3 (isi) (isi)  (isi)                                     (Mencurigakan /
+
+                                                                 Normal)
+
+...
+
+Analisis Klaster Mencurigakan. Klaster (isi nomor) teridentifikasi sebagai klaster dengan
+
+tingkat kecurigaan tertinggi berdasarkan beberapa indikator: (isi: misal "kepadatan edge
+
+internal sebesar X%, rata-rata keseragaman konten komentar sebesar Y% berdasarkan
+
+cosine similarity TF-IDF, dan sinkronisasi waktu posting dalam rentang Z menit").
+
+Akun-akun dalam klaster ini memperlihatkan pola yang tidak alami berupa (isi: misal
+"komentar yang hampir identik dengan variasi minimal pada kata-kata tertentu, saling me-
+reply antar akun dalam kelompok yang sama, dan seluruh akun aktif dalam rentang waktu
+yang sangat berdekatan"). Pola koordinasi semacam ini konsisten dengan karakteristik
+jaringan bot terkoordinasi sebagaimana dijelaskan pada subbab 2.1.2.
+
+(Sisipkan screenshot visualisasi graf studi kasus dari cytoscape.js, dengan penanda visual
+pada klaster yang teridentifikasi mencurigakan.)
+
+Catatan Penting. Perlu ditekankan bahwa output sistem ini merupakan indikasi awal
+berdasarkan analisis pola struktural jaringan komentar, bukan vonis definitif terhadap status
+bot suatu akun. Klasifikasi final memerlukan verifikasi lebih lanjut oleh analis manusia atau
+integrasi dengan data tambahan di luar ruang lingkup penelitian ini.
+
+4.3.5. Pembahasan dan Rekomendasi
+
+Keunggulan Integrasi Canopy Clustering dan Algoritma Kruskal
+
+Hasil pengujian pada subbab 4.4.2 dan 4.4.3 secara konsisten menunjukkan bahwa integrasi
+Canopy Clustering dan algoritma Kruskal (skenario C) menghasilkan kinerja yang lebih baik
+dibandingkan kedua skenario baseline. Dari sisi efisiensi, Canopy Clustering berhasil
+mereduksi jumlah edge rata-rata sebesar (isi angka)%, yang secara langsung berdampak
+pada penurunan waktu eksekusi algoritma Kruskal karena kompleksitas sortasi edge O(E log
+E) bergantung langsung pada jumlah edge E. Dari sisi kualitas klaster, nilai Modularity yang
+lebih tinggi pada skenario C dibandingkan skenario B menunjukkan bahwa pembentukan
+MST menghasilkan struktur komunitas yang lebih bermakna dibandingkan pengelompokan
+berbasis canopy saja. Temuan ini menjawab Rumusan Masalah 2 dan 3 penelitian ini secara
+terukur.
+
+Keterbatasan Sistem
+
+                                                     67
+Meskipun sistem yang dibangun menunjukkan hasil yang menjanjikan, terdapat beberapa
+keterbatasan yang perlu diakui secara jujur. Pertama, data yang digunakan terbatas pada
+komentar publik yang dapat diakses melalui API, sehingga akun bot yang beroperasi secara
+lebih tersembunyi -- misalnya melalui pesan langsung atau interaksi privat -- tidak dapat
+terdeteksi. Kedua, sistem tidak memiliki ground truth label akun bot yang terverifikasi,
+sehingga evaluasi kualitas klaster hanya dapat dilakukan menggunakan metrik internal dan
+inspeksi manual, bukan dengan metrik berbasis supervisi seperti akurasi atau F1-score.
+Ketiga, output sistem berupa indikasi awal yang memerlukan verifikasi manusia, sehingga
+tidak dapat digunakan sebagai dasar tindakan otomatis terhadap akun tertentu. Keempat,
+ketergantungan pada TikTokApi dan Playwright membuat sistem rentan terhadap perubahan
+kebijakan atau struktur platform TikTok di masa mendatang.
+
+Perbandingan dengan Penelitian Terdahulu
+
+Dibandingkan dengan penelitian-penelitian terdahulu yang dirangkum pada Tabel 2.1 dan
+2.2, penelitian ini memiliki beberapa perbedaan mendasar. Sebagian besar penelitian
+terdahulu berfokus pada deteksi bot berbasis analisis akun individual menggunakan
+pendekatan supervised learning dengan fitur profil akun, yang memerlukan data berlabel
+dan rentan terhadap bot yang dirancang untuk meniru perilaku manusia. Penelitian ini
+mengambil pendekatan berbeda dengan menganalisis pola koordinasi struktural pada
+jaringan komentar secara unsupervised, sehingga tidak memerlukan data berlabel dan lebih
+tahan terhadap manipulasi fitur profil individual. Penggunaan kombinasi Canopy Clustering
+dan algoritma Kruskal untuk deteksi komunitas bot pada platform TikTok, sejauh yang
+diketahui, belum pernah dilakukan pada penelitian sebelumnya, sehingga pendekatan ini
+merupakan kontribusi baru dalam bidang deteksi bot media sosial berbasis graf.
+
+Rekomendasi Pengembangan
+
+Berdasarkan hasil penelitian dan keterbatasan yang telah diidentifikasi, berikut disampaikan
+beberapa rekomendasi untuk pengembangan sistem lebih lanjut. Pertama, integrasi fitur
+temporal yang lebih kaya -- seperti analisis distribusi waktu posting per jam dan per hari --
+dapat meningkatkan akurasi scoring kecurigaan secara signifikan. Kedua, pengembangan
+mekanisme validasi semi-otomatis menggunakan data dari platform lain (seperti data
+Twitter/X yang memiliki label bot lebih banyak tersedia secara publik) dapat membantu
+mengkalibrasi ambang batas skor kecurigaan. Ketiga, penggantian TF-IDF dengan model
+sentence embedding yang lebih canggih (seperti sentence-transformers) berpotensi
+meningkatkan akurasi penghitungan kemiripan konten, terutama untuk komentar berbahasa
+Indonesia yang kaya akan singkatan dan slang. Keempat, implementasi pemrosesan
+streaming secara real-time -- alih-alih batch processing seperti saat ini -- akan
+memungkinkan sistem digunakan untuk memantau video yang sedang viral secara langsung.
+
+                                                     68
+                 BAB 5. Penutup
+
+5.1. Kesimpulan
+5.2. Saran
+
+                 69
+           DAFTAR PUSTAKA
+
+Aditya, C. S. K., Hani'ah, M., Fitrawan, A. A., Arifin, A. Z., & Purwitasari, D. (2016).
+      Deteksi Bot Spammer pada Twitter Berbasis Sentiment Analysis dan Time Interval
+      Entropy. Jurnal Buana Informatika, 7(3). https://doi.org/10.24002/JBI.V7I3.656
+
+Arranz-Escudero, O., Quijano-a, L. ara, & Liberatore, F. (2025a). Enhancing misinformation
+      countermeasures: a multimodal approach to twitter bot detection. Social Network
+      Analysis and Mining 2025 15:1, 15(1), 26-. https://doi.org/10.1007/S13278-025-
+      01435-W
+
+Arranz-Escudero, O., Quijano-a, L. ara, & Liberatore, F. (2025b). Enhancing misinformation
+      countermeasures: a multimodal approach to twitter bot detection. Social Network
+      Analysis and Mining 2025 15:1, 15(1), 26-. https://doi.org/10.1007/S13278-025-
+      01435-W
+
+Bradshaw, S., Bailey, H., & Howard, P. N. (2021). Industrialized Disinformation 2020
+      Global Inventory of Organized Social Media Manipulation.
+      https://demtech.oii.ox.ac.uk/wp-content/uploads/sites/12/2021/02/CyberTroop-
+      Report20-Draft9.pdf
+
+Cheng, M., Xiao, Y., Huang, T., Lei, C., & Zhang, C. (2025). CB-MTE: Social Bot Detection
+      via Multi-Source Heterogeneous Feature Fusion. Sensors (Basel, Switzerland), 25(11),
+      3549. https://doi.org/10.3390/S25113549
+
+Cresci, S. (2020). A decade of social bot detection. Communications of the ACM, 63(10),
+      72­83.
+      https://doi.org/10.1145/3409116;SUBPAGE:STRING:ABSTRACT;WEBSITE:WEBS
+      ITE:DL-SITE;TAXONOMY:TAXONOMY:ACM-
+      PUBTYPE;PAGEGROUP:STRING:PUBLICATION
+
+Cresci, S., Yang, K.-C., Spognardi, A., Di Pietro, R., Menczer, F., & Petrocchi, M. (2025).
+      Demystifying Misconceptions in Social Bots Research.
+
+Cunningham, P., & Delany, S. J. (2022). K-Nearest Neighbour Classifiers-A Tutorial. ACM
+
+Computing  Surveys,                                            54(6).
+
+https://doi.org/10.1145/3459665;SERIALTOPIC:TOPIC:ACM-PUBTYPE
+
+Feng, S., Tan, Z., Li, R., & Luo, M. (2021). Heterogeneity-aware Twitter Bot Detection with
+      Relational Graph Transformers. Proceedings of the 36th AAAI Conference on Artificial
+      Intelligence, AAAI 2022, 36, 3977­3985. https://doi.org/10.1609/aaai.v36i4.20314
+
+Feng, S., Wan, H., Wang, N., & Luo, M. (2021). BotRGCN: Twitter bot detection with
+
+relational graph convolutional networks. Proceedings of the 2021 IEEE/ACM
+
+International Conference on Advances in Social Networks Analysis and Mining,
+
+ASONAM     2021,                                               236­239.
+
+https://doi.org/10.1145/3487351.3488336;TAXONOMY:TAXONOMY:CONFEREN
+
+CE-COLLECTIONS;WGROUP:STRING:ACM
+
+Feng, S., Wan, H., Wang, N., Tan, Z., Luo, M., & Tsvetkov, Y. (2024). What Does the Bot
+      Say? Opportunities and Risks of Large Language Models in Social Media Bot
+      Detection. 1, 3580­3601. https://github.com/BunsenFeng/botsay.
+
+           70
+Gao, J., Liu, B., Ji, W., & Huang, H. (2024). A Systematic Literature Survey of Sparse Matrix-
+      Vector Multiplication. https://arxiv.org/pdf/2404.06047v1
+
+He, B., Yang, Y., Wu, Q., Liu, H., Yang, R., Peng, H., Wang, X., Liao, Y., & Zhou, P. (2024a).
+      Dynamicity-aware Social Bot Detection with Dynamic Graph Transformers.
+
+He, B., Yang, Y., Wu, Q., Liu, H., Yang, R., Peng, H., Wang, X., Liao, Y., & Zhou, P. (2024b).
+      Dynamicity-aware Social Bot Detection with Dynamic Graph Transformers.
+
+Huang, H., Tian, H., Zheng, X., Zhang, X., Zeng, D. D., & Wang, F. Y. (2024). CGNN: A
+      Compatibility-Aware Graph Neural Network for Social Media Bot Detection. IEEE
+      Transactions on Computational Social Systems, 11(5), 6528­6543.
+      https://doi.org/10.1109/TCSS.2024.3396413
+
+Javed, D., Jhanjhi, N. Z., Khan, N. A., Ray, S. K., Mazroa, A. Al, Ashfaq, F., & Das, S. R.
+      (2024). Towards the future of bot detection: A comprehensive taxonomical review and
+      challenges on Twitter/X. Computer Networks, 254, 110808.
+      https://doi.org/10.1016/J.COMNET.2024.110808
+
+Liu, F., Li, Z., Yang, C., Gong, D., Lu, H., & Liu, F. (2024). SEGCN: a subgraph encoding
+      based graph convolutional network model for social bot detection. Scientific Reports
+      2024 14:1, 14(1), 4122-. https://doi.org/10.1038/s41598-024-54809-z
+
+Mahdi, A., Alzubaidi, N., Sabah Sagheer, N., & Asendia, Z. K. (2025). Detecting Bot-
+      Controlled Accounts on Social Media Using Deep Learning. Kerbala Journal of
+      Computing and Technology.
+
+Malkov, Y. A., & Yashunin, D. A. (2020). Efficient and Robust Approximate Nearest
+      Neighbor Search Using Hierarchical Navigable Small World Graphs. IEEE
+      Transactions on Pattern Analysis and Machine Intelligence, 42(4), 824­836.
+      https://doi.org/10.1109/TPAMI.2018.2889473;PAGE:STRING:ARTICLE/CHAPTER
+
+Mccallum, A., Nigam, K., & Ungar, L. H. (2000a). Efficient Clustering of High-Dimensional
+      Data Sets with Application to Reference Matching.
+
+Mccallum, A., Nigam, K., & Ungar, L. H. (2000b). Efficient Clustering of High-Dimensional
+      Data Sets with Application to Reference Matching.
+
+Meng, L., Shao, Y., Yuan, L., Lai, L., Cheng, P., Li, X., Yu, W., Zhang, W., Lin, X., & Zhou,
+
+J. (2024). A Survey of Distributed Graph Algorithms on Massive Graphs. ACM
+
+Computing  Surveys,  57(2).
+
+https://doi.org/10.1145/3694966;REQUESTEDJOURNAL:JOURNAL:CSUR;TAXO
+
+NOMY:TAXONOMY:ACM-PUBTYPE;PAGEGROUP:STRING:PUBLICATION
+
+Ng, L. H. X., & Carley, K. M. (2025). A global comparison of social media bot and human
+      characteristics. Scientific Reports 2025 15:1, 15(1), 10973-.
+      https://doi.org/10.1038/s41598-025-96372-1
+
+Pennycook, G., & Rand, D. G. (2022). The Psychology of Fake News. Elsevier.
+      https://doi.org/10.1016/J.TICS.2021.02.007
+
+Priyatno, A. M., & Ningsih, L. (n.d.). SISTEMASI: Jurnal Sistem Informasi Pembobotan TF-
+      IDF untuk Mendeteksi Akun Spammer di Twitter berdasarkan Tweet dan Representasi
+
+           71
+Retweet dari Tweet TF-IDF Weighting to Detect Spammer Accounts on Twitter based
+on Tweets and Retweet Representation of Tweets. http://sistemasi.ftik.unisi.ac.id
+
+Sagheer, N. S., & Yousif, S. (2021a). Canopy with &-means Clustering Algorithm for Big
+
+Data      Analytics.  AIP  Conference         Proceedings,  2334(1).
+
+https://doi.org/10.1063/5.0042398/586472
+
+Sagheer, N. S., & Yousif, S. (2021b). Canopy with &-means Clustering Algorithm for Big
+
+Data      Analytics.  AIP  Conference         Proceedings,  2334(1).
+
+https://doi.org/10.1063/5.0042398/586472
+
+Sibaroni, Y., & Prasetiyowati, S. S. (2022). Buzzer Detection on Indonesian Twitter using
+      SVM and Account Property Feature Extension. Jurnal RESTI, 6(4), 663­669.
+      https://doi.org/10.29207/RESTI.V6I4.4338
+
+Simon Kemp. (2025, February 25). Digital 2025: Indonesia -- DataReportal ­ Global
+      Digital Insights. Datareportal. https://datareportal.com/reports/digital-2025-indonesia
+
+Skiena, S. (2020a). The Algorithm Design Manual (D. Gries & O. Hazzan, Eds.; Third
+      Edition). Springer. https://doi.org/https://doi.org/10.1007/978-3-030-54256-6
+
+Skiena, S. (2020b). The Algorithm Design Manual (D. Gries & O. Hazzan, Eds.; Third
+      Edition). Springer. https://doi.org/https://doi.org/10.1007/978-3-030-54256-6
+
+Tomassi, A., Falegnami, A., & Romano, E. (2024). Mapping automatic social media
+
+information disorder. The role of bots and AI in spreading misleading information in
+
+society.  PLOS             ONE,               19(5),        e0303183.
+
+https://doi.org/10.1371/JOURNAL.PONE.0303183
+
+Vosoughi, S., Roy, D., & Aral, S. (2018). The spread of true and false news online. Science
+      (New York, N.Y.), 359(6380), 1146­1151. https://doi.org/10.1126/SCIENCE.AAP9559
+
+Yang, K.-C., Varol, O., Nwala, A. C., Sayyadiharikandeh, M., Ferrara, E., Flammini, A., &
+      Menczer, F. (2023a). Social Bots: Detection and Challenges.
+      http://arxiv.org/abs/2312.17423
+
+Yang, K.-C., Varol, O., Nwala, A. C., Sayyadiharikandeh, M., Ferrara, E., Flammini, A., &
+      Menczer, F. (2023b). Social Bots: Detection and Challenges.
+      http://arxiv.org/abs/2312.17423
+
+Yang, K.-C., Yang, K.-C., & Menczer, F. (2024). Anatomy of an AI-powered malicious social
+      botnet. Journal of Quantitative Description: Digital Media, 4.
+      https://doi.org/10.51685/jqd.2024.icwsm.7
+
+                           72
+

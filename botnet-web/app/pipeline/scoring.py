@@ -4,7 +4,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import networkx as nx
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
+
+from .text_features import fit_tuned_tfidf
 
 _COMPONENT_WEIGHTS = {
     "cluster_density": 0.25,
@@ -13,6 +14,7 @@ _COMPONENT_WEIGHTS = {
     "account_age": 0.15,
     "high_frequency": 0.15,
 }
+_CONTENT_MAX_FEATURES = 20000
 
 
 def _safe_mean(values: List[float]) -> float:
@@ -34,26 +36,10 @@ def _build_text_matrix(nodes: List[Dict[str, Any]], parsed: Optional[Dict[str, A
     if not user_texts:
         user_texts = {node["id"]: node.get("text_sample", "") for node in nodes if node.get("text_sample")}
 
-    user_ids: List[str] = []
-    corpus: List[str] = []
-    for uid, text in user_texts.items():
-        cleaned = (text or "").strip()
-        if not cleaned:
-            continue
-        user_ids.append(uid)
-        corpus.append(cleaned)
-
-    if len(user_ids) < 2:
+    try:
+        user_ids, _vectorizer, matrix = fit_tuned_tfidf(user_texts, max_features=_CONTENT_MAX_FEATURES, min_users=2)
+    except ValueError:
         return {}, None
-
-    vectorizer = TfidfVectorizer(
-        strip_accents="unicode",
-        lowercase=True,
-        ngram_range=(1, 2),
-        min_df=1,
-        norm="l2",
-    )
-    matrix = vectorizer.fit_transform(corpus)
     return {uid: idx for idx, uid in enumerate(user_ids)}, matrix
 
 
@@ -84,11 +70,90 @@ def _weighted_component_average(components: Dict[str, Optional[float]]) -> float
     return weighted_sum / total_weight
 
 
+def _relative_excess_score(value: float, baseline: float, stretch: float = 4.0) -> float:
+    if baseline <= 0 or value <= baseline:
+        return 0.0
+    ratio = value / baseline
+    return _clamp01((ratio - 1.0) / max(1.0, stretch))
+
+
+def _inverse_span_score(value: float, reference: float) -> float:
+    if reference <= 0:
+        return 0.0
+    return _clamp01(1.0 - _clamp01(value / reference))
+
+
+def _cluster_density_score(structural_density: float, avg_weight: float, edge_weight_p90: float) -> Tuple[float, float]:
+    weighted_density = _clamp01(avg_weight / edge_weight_p90) if edge_weight_p90 > 0 else 0.0
+    return _clamp01((0.55 * structural_density) + (0.45 * weighted_density)), weighted_density
+
+
+def _extract_activity_points(node: Dict[str, Any], summary: Dict[str, Any]) -> Tuple[List[float], Optional[float]]:
+    raw_timestamps = summary.get("timestamps", [])
+    timestamps: List[float] = []
+    if isinstance(raw_timestamps, list) and raw_timestamps:
+        timestamps.extend(float(ts) for ts in raw_timestamps if ts is not None)
+    else:
+        first_ts = node.get("first_timestamp")
+        last_ts = node.get("last_timestamp")
+        if first_ts is not None:
+            timestamps.append(float(first_ts))
+        if last_ts is not None and last_ts != first_ts:
+            timestamps.append(float(last_ts))
+
+    if not timestamps:
+        return [], None
+
+    timestamps.sort()
+    return timestamps, (timestamps[0] + timestamps[-1]) / 2.0
+
+
+def _temporal_burst_score(
+    cluster_comment_total: float,
+    cluster_timestamps: List[float],
+    member_centers: List[float],
+    global_comment_rate: float,
+    global_span: float,
+) -> Tuple[float, float, float, float, float]:
+    if not cluster_timestamps:
+        return 0.0, 0.0, 0.0, 0.0, 0.0
+
+    cluster_span = max(1.0, max(cluster_timestamps) - min(cluster_timestamps)) if len(cluster_timestamps) >= 2 else 1.0
+    cluster_comment_rate = cluster_comment_total / cluster_span if cluster_comment_total > 0 else 0.0
+    rate_pressure = _relative_excess_score(cluster_comment_rate, global_comment_rate, stretch=3.0)
+    compact_window = _inverse_span_score(cluster_span, global_span)
+
+    if len(member_centers) >= 2:
+        center_alignment = _inverse_span_score(max(member_centers) - min(member_centers), global_span)
+    elif member_centers:
+        center_alignment = compact_window
+    else:
+        center_alignment = 0.0
+
+    score = _clamp01((0.45 * rate_pressure) + (0.30 * compact_window) + (0.25 * center_alignment))
+    return score, rate_pressure, compact_window, center_alignment, cluster_span
+
+
+def _high_frequency_score(
+    cluster_comment_counts: List[float],
+    median_comment_count: float,
+    p90_excess_comments: float,
+) -> Tuple[float, float, float]:
+    if not cluster_comment_counts:
+        return 0.0, 0.0, 0.0
+
+    repeat_threshold = max(1.0, median_comment_count)
+    repeat_ratio = _safe_mean([1.0 if count > repeat_threshold else 0.0 for count in cluster_comment_counts])
+    mean_excess = _safe_mean([max(0.0, count - repeat_threshold) for count in cluster_comment_counts])
+    excess_pressure = _clamp01(mean_excess / max(1.0, p90_excess_comments))
+    return _clamp01((0.5 * repeat_ratio) + (0.5 * excess_pressure)), repeat_ratio, excess_pressure
+
+
 def _top_reasons(stats: Dict[str, Any]) -> List[str]:
     candidates = [
         ("kepadatan cluster tinggi", stats.get("cluster_density", 0.0)),
         ("repetisi konten tinggi", stats.get("content_repetition", 0.0)),
-        ("aktivitas temporal burst", stats.get("temporal_burst", 0.0)),
+        ("aktivitas temporal sinkron", stats.get("temporal_burst", 0.0)),
         ("frekuensi komentar tinggi", stats.get("high_frequency", 0.0)),
     ]
     account_age = stats.get("account_age")
@@ -111,7 +176,10 @@ def score_clusters(
     cluster density, content repetition, temporal burst, optional new-account ratio,
     and high comment frequency.
 
-    Returns tuple of (suspicious_user_ids, metrics_dict, suspicious_details).
+    Every score-producing component is normalized to the 0..1 range where
+    larger values always mean "more suspicious".
+
+    Returns tuple of (suspicious_user_ids, metrics_dict, suspicious_details, cluster_stats, node_scores).
     """
     G = nx.Graph()
     label_map: Dict[str, str] = {}
@@ -148,16 +216,8 @@ def score_clusters(
     for node in nodes:
         uid = node["id"]
         summary = summary_lookup.get(uid, {})
-        timestamps = summary.get("timestamps", [])
-        if isinstance(timestamps, list) and timestamps:
-            all_timestamps.extend(float(ts) for ts in timestamps if ts is not None)
-            continue
-        first_ts = node.get("first_timestamp")
-        last_ts = node.get("last_timestamp")
-        if first_ts is not None:
-            all_timestamps.append(float(first_ts))
-        if last_ts is not None and last_ts != first_ts:
-            all_timestamps.append(float(last_ts))
+        timestamps, _ = _extract_activity_points(node, summary)
+        all_timestamps.extend(timestamps)
 
     global_span = max(1.0, (max(all_timestamps) - min(all_timestamps)) if len(all_timestamps) >= 2 else 1.0)
     global_comment_total = max(1.0, float(sum(global_comment_counts)))
@@ -167,6 +227,7 @@ def score_clusters(
     cluster_scores: Dict[str, float] = {}
     cluster_stats: Dict[str, Dict[str, Any]] = {}
     node_score = {node["id"]: 0.0 for node in nodes}
+    node_prominence = {node["id"]: 0.0 for node in nodes}
     node_cluster: Dict[str, str] = {}
 
     for cid, members in clusters.items():
@@ -178,16 +239,25 @@ def score_clusters(
             cluster_stats[cid] = {
                 "cluster_density": 0.0,
                 "structural_density": 0.0,
+                "weighted_density": 0.0,
                 "content_repetition": 0.0,
                 "temporal_burst": 0.0,
+                "temporal_rate_pressure": 0.0,
+                "temporal_compactness": 0.0,
+                "temporal_alignment": 0.0,
+                "cluster_span_sec": 0.0,
                 "account_age": None,
                 "account_age_coverage": 0.0,
                 "high_frequency": 0.0,
+                "high_frequency_repeat_ratio": 0.0,
+                "high_frequency_excess": 0.0,
                 "avg_weight": 0.0,
                 "deg_conc": 0.0,
+                "deg_conc_raw": 0.0,
                 "cluster_size": len(members),
                 "score": 0.0,
                 "reasons": [],
+                "is_suspicious": False,
             }
             cluster_scores[cid] = 0.0
             continue
@@ -195,49 +265,50 @@ def score_clusters(
         weights = [float(data.get("weight", 0.0)) for _, _, data in sub.edges(data=True)]
         avg_weight = _safe_mean(weights)
         structural_density = _clamp01(nx.density(sub))
-        weighted_density = _clamp01(avg_weight / edge_weight_p90) if weights else 0.0
-        cluster_density = _clamp01(0.6 * structural_density + 0.4 * weighted_density)
+        cluster_density, weighted_density = _cluster_density_score(structural_density, avg_weight, edge_weight_p90)
 
         degrees = [deg for _, deg in sub.degree()]
         avg_degree = _safe_mean([float(deg) for deg in degrees])
-        deg_conc = (max(degrees) / avg_degree) if avg_degree > 0 else 0.0
+        deg_conc_raw = (max(degrees) / avg_degree) if avg_degree > 0 else 0.0
+        deg_conc = _clamp01((deg_conc_raw - 1.0) / 3.0) if deg_conc_raw > 0 else 0.0
 
         content_repetition = _mean_pairwise_similarity(members, text_index, text_matrix)
 
         cluster_comment_counts: List[float] = []
+        cluster_comment_count_map: Dict[str, float] = {}
         cluster_timestamps: List[float] = []
+        member_centers: List[float] = []
         account_age_values: List[float] = []
         for uid in members:
             node = node_map.get(uid, {})
             summary = summary_lookup.get(uid, {})
-            cluster_comment_counts.append(float(node.get("comment_count", 0) or summary.get("comment_count", 0) or 0.0))
+            comment_count = float(node.get("comment_count", 0) or summary.get("comment_count", 0) or 0.0)
+            cluster_comment_counts.append(comment_count)
+            cluster_comment_count_map[uid] = comment_count
 
-            timestamps = summary.get("timestamps", [])
-            if isinstance(timestamps, list) and timestamps:
-                cluster_timestamps.extend(float(ts) for ts in timestamps if ts is not None)
-            else:
-                first_ts = node.get("first_timestamp")
-                last_ts = node.get("last_timestamp")
-                if first_ts is not None:
-                    cluster_timestamps.append(float(first_ts))
-                if last_ts is not None and last_ts != first_ts:
-                    cluster_timestamps.append(float(last_ts))
+            timestamps, center = _extract_activity_points(node, summary)
+            cluster_timestamps.extend(timestamps)
+            if center is not None:
+                member_centers.append(center)
 
             new_account_signal = summary.get("new_account_signal")
             if new_account_signal is not None:
                 account_age_values.append(_clamp01(float(new_account_signal)))
 
         cluster_comment_total = sum(cluster_comment_counts)
-        cluster_span = max(1.0, (max(cluster_timestamps) - min(cluster_timestamps)) if len(cluster_timestamps) >= 2 else 1.0)
-        cluster_comment_rate = cluster_comment_total / cluster_span if cluster_comment_total > 0 else 0.0
-        rate_ratio = (cluster_comment_rate / global_comment_rate) if global_comment_rate > 0 else 0.0
-        normalized_rate = _clamp01((rate_ratio - 1.0) / 4.0)
-        compact_window = 1.0 - _clamp01(cluster_span / global_span)
-        temporal_burst = _clamp01(0.7 * normalized_rate + 0.3 * compact_window)
+        temporal_burst, rate_pressure, compact_window, center_alignment, cluster_span = _temporal_burst_score(
+            cluster_comment_total,
+            cluster_timestamps,
+            member_centers,
+            global_comment_rate,
+            global_span,
+        )
 
-        repeat_ratio = _safe_mean([1.0 if count > max(1.0, median_comment_count) else 0.0 for count in cluster_comment_counts])
-        mean_excess = _safe_mean([max(0.0, count - median_comment_count) for count in cluster_comment_counts])
-        high_frequency = _clamp01(0.5 * repeat_ratio + 0.5 * (mean_excess / p90_excess_comments))
+        high_frequency, repeat_ratio, excess_pressure = _high_frequency_score(
+            cluster_comment_counts,
+            median_comment_count,
+            p90_excess_comments,
+        )
 
         account_age = _safe_mean(account_age_values) if account_age_values else None
         account_age_coverage = (len(account_age_values) / len(members)) if members else 0.0
@@ -254,22 +325,39 @@ def score_clusters(
         stats = {
             "cluster_density": cluster_density,
             "structural_density": structural_density,
+            "weighted_density": weighted_density,
             "content_repetition": content_repetition,
             "temporal_burst": temporal_burst,
+            "temporal_rate_pressure": rate_pressure,
+            "temporal_compactness": compact_window,
+            "temporal_alignment": center_alignment,
+            "cluster_span_sec": cluster_span,
             "account_age": account_age,
             "account_age_coverage": account_age_coverage,
             "high_frequency": high_frequency,
+            "high_frequency_repeat_ratio": repeat_ratio,
+            "high_frequency_excess": excess_pressure,
             "avg_weight": avg_weight,
             "deg_conc": deg_conc,
+            "deg_conc_raw": deg_conc_raw,
             "cluster_size": len(members),
             "score": score,
+            "is_suspicious": False,
         }
         stats["reasons"] = _top_reasons(stats)
 
         cluster_scores[cid] = score
         cluster_stats[cid] = stats
+        node_strengths = {uid: float(sub.degree(uid, weight="weight")) for uid in members}
+        max_strength = max(node_strengths.values()) if node_strengths else 1.0
+        max_comments = max(cluster_comment_count_map.values()) if cluster_comment_count_map else 1.0
         for uid in members:
-            node_score[uid] = score
+            prominence = _clamp01(
+                (0.6 * _clamp01(node_strengths.get(uid, 0.0) / max(1.0, max_strength)))
+                + (0.4 * _clamp01(cluster_comment_count_map.get(uid, 0.0) / max(1.0, max_comments)))
+            )
+            node_prominence[uid] = prominence
+            node_score[uid] = _clamp01((0.7 * score) + (0.3 * prominence))
 
     positive_scores = [score for score in cluster_scores.values() if score > 0]
     suspicious_clusters: List[str] = []
@@ -285,6 +373,9 @@ def score_clusters(
                 cutoff = top_cluster[1]
 
     suspicious_cluster_set = set(suspicious_clusters)
+    for cid, stats in cluster_stats.items():
+        stats["is_suspicious"] = cid in suspicious_cluster_set
+
     suspicious = [uid for uid, cid in node_cluster.items() if cid in suspicious_cluster_set]
 
     try:
@@ -361,16 +452,24 @@ def score_clusters(
                 "username": label_map.get(uid, uid),
                 "cluster_id": cid,
                 "cluster_size": int(stats.get("cluster_size", 0) or 0),
+                "cluster_is_suspicious": bool(stats.get("is_suspicious", False)),
                 "canopy_id": canopy_assignments.get(uid) if canopy_assignments else None,
                 "score": node_score.get(uid, 0.0),
+                "node_prominence": float(node_prominence.get(uid, 0.0) or 0.0),
                 "cluster_avg_weight": float(stats.get("avg_weight", 0.0) or 0.0),
                 "cluster_degree_concentration": float(stats.get("deg_conc", 0.0) or 0.0),
+                "cluster_degree_concentration_raw": float(stats.get("deg_conc_raw", 0.0) or 0.0),
                 "cluster_density": float(stats.get("cluster_density", 0.0) or 0.0),
                 "content_repetition": float(stats.get("content_repetition", 0.0) or 0.0),
                 "temporal_burst": float(stats.get("temporal_burst", 0.0) or 0.0),
+                "temporal_alignment": float(stats.get("temporal_alignment", 0.0) or 0.0),
+                "temporal_compactness": float(stats.get("temporal_compactness", 0.0) or 0.0),
+                "temporal_rate_pressure": float(stats.get("temporal_rate_pressure", 0.0) or 0.0),
                 "account_age_ratio": stats.get("account_age"),
                 "account_age_coverage": float(stats.get("account_age_coverage", 0.0) or 0.0),
                 "high_frequency": float(stats.get("high_frequency", 0.0) or 0.0),
+                "high_frequency_repeat_ratio": float(stats.get("high_frequency_repeat_ratio", 0.0) or 0.0),
+                "high_frequency_excess": float(stats.get("high_frequency_excess", 0.0) or 0.0),
                 "reasons": stats.get("reasons", []),
                 "degree": degree_unweighted,
                 "strength": degree_weighted,
@@ -402,4 +501,4 @@ def score_clusters(
     if canopy_assignments and total_edge_weight > 0:
         metrics["intra_canopy_edge_ratio"] = intra_canopy_weight / total_edge_weight
 
-    return suspicious, metrics, suspicious_details
+    return suspicious, metrics, suspicious_details, cluster_stats, node_score

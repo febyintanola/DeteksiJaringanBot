@@ -28,7 +28,7 @@ async def test_pipeline():
 
     print("Building canopy...")
     try:
-        canopy = build_canopies(parsed.get("user_texts", {}), t1=0.8, t2=0.6, use_ann=False)
+        canopy = build_canopies(parsed.get("user_texts", {}), t1=0.6, t2=0.8, use_ann=False)
     except ValueError:
         canopy = CanopyArtifacts(assignments={}, canopies={}, embeddings={})
     print(f"Canopies: {len(canopy.canopies)} (avg size ~{(sum(len(v) for v in canopy.canopies.values()) / len(canopy.canopies)) if canopy.canopies else 0:.1f})")
@@ -51,7 +51,7 @@ async def test_pipeline():
     print(f"Clusters: {len(clusters)}")
 
     print("Scoring...")
-    suspicious, metrics, details = score_clusters(
+    suspicious, metrics, details, _cluster_stats, _node_scores = score_clusters(
         nodes,
         edges,
         clusters,

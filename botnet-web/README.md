@@ -11,6 +11,7 @@ Prototype web untuk deteksi jaringan bot pada kolom komentar video TikTok.
 - Ekspor dapat ditambahkan (CSV/JSON)
 
 ## Prasyarat
+- Disarankan Python 3.10 atau 3.12 untuk lingkungan ini. Python 3.13 bisa memicu build source pada dependensi lama.
 - ms_token TikTok diset di environment agar TikTokApi bisa membuat sesi
   - Windows PowerShell:
     ```powershell
@@ -35,6 +36,10 @@ Prototype web untuk deteksi jaringan bot pada kolom komentar video TikTok.
    python -m venv .venv; .\.venv\Scripts\Activate.ps1
    pip install -r requirements.txt
    ```
+  Jika ingin mencoba akselerasi canopy ANN, instal `hnswlib` secara terpisah hanya bila wheel tersedia untuk Python yang dipakai:
+  ```powershell
+  pip install hnswlib
+  ```
 2) Jalankan server
    ```powershell
    $env:ms_token = "<isi_ms_token>"
@@ -57,7 +62,7 @@ Prototype web untuk deteksi jaringan bot pada kolom komentar video TikTok.
 
 ## Catatan Algoritma
 - Mention edge: dibuat dari deteksi `@username` dalam teks komentar (v1 memetakan ke user yang juga berkomentar)
-- Konten: canopy pre-filter memakai TF‑IDF + TruncatedSVD untuk mengelompokkan akun yang mirip secara teks; layer graf konten masih memakai overlap token sederhana sebagai baseline
+- Konten: canopy pre-filter memakai TF‑IDF + TruncatedSVD untuk mengelompokkan akun yang mirip secara teks; layer graf konten memakai TF‑IDF + cosine similarity lalu dipangkas ke top-k neighbor
 - MST: dihitung sebagai minimum spanning tree atas jarak `1/(similarity+eps)` dengan algoritma Kruskal; cluster diperoleh dengan memotong edge MST yang di bawah median bobot per komponen
 - Skoring: skor cluster komposit memakai `cluster_density`, `content_repetition`, `temporal_burst`, `high_frequency`, dan `account_age` bila metadata akun tersedia
 - Canopy T1/T2: placeholder di UI, implementasi ANN + canopy akan ditambahkan bertahap
@@ -80,7 +85,7 @@ docker run -it --rm -p 8000:8000 `
 ```
 
 ## Next Steps
-- Ganti Jaccard dengan TF‑IDF/embedding + hnswlib ANN untuk canopy
+- Upgrade layer konten dari TF‑IDF ke embedding semantik yang lebih kuat, dan tambahkan ANN untuk pencarian neighbor yang lebih efisien
 - Tambah edges co-thread dari reply traversal
 - Ekspor CSV/JSON, simpan run artifacts
 - Tooltip edukatif lebih lengkap dan mode dark
@@ -101,13 +106,14 @@ Catatan: Bila memakai k‑NN (k konstan kecil), maka `E ≈ O(V·k)` dan MST `O(
 
 ### Benchmark Empiris
 - File: `benchmark.py` menjalankan pipeline untuk beberapa ukuran komentar dan menyimpan hasil.
-- Output: `data/bench_results.json` dan `data/bench_results.csv` berisi waktu `build_sec`, `cluster_sec`, `score_sec` serta ukuran graf.
+- Sumber komentar untuk benchmark selalu diambil live dari URL video TikTok yang diberikan.
+- Output: `data/bench_results.json` dan `data/bench_results.csv` berisi waktu `fetch_sec`, `parse_sec`, `preprocess_tfidf_sec`, `ann_prefilter_sec`, `canopy_cluster_sec`, `build_sec`, `cluster_sec`, `score_sec`, `total_sec`, `total_with_fetch_sec`, jumlah cluster `n_clusters`, serta metrik kualitas seperti `modularity`, `silhouette_score`, `conductance_mean`, dan `quality_interpretation`.
 
 Menjalankan benchmark:
 ```powershell
 cd "c:\Users\Ola\OneDrive\Documents\Kuliahnya Intan\Kebutuhan Tugas Akhir\Prototyping\botnet-web"
-$env:ms_token = "<isi_ms_token>"; $env:BENCH_VIDEO_URL = "<url_video_tiktok>"
-python benchmark.py
+$env:ms_token = "<isi_ms_token>"
+python benchmark.py --video-url "<url_video_tiktok>"
 ```
 
 Interpretasi cepat:
@@ -119,3 +125,16 @@ Interpretasi cepat:
 - Ringkas tabel hasil dari `bench_results.csv` (size → waktu tiap tahap).
 - Grafik batang sederhana (Chart.js) untuk memvisualisasikan waktu per tahap.
 - Tuliskan hubungan teoretis vs empiris, dan faktor dominan (misal build graf).
+
+### Tambahan untuk Kualitas Graph
+- Benchmark juga dapat menyimpan metrik kualitas graf dan hasil `suspicious detection`, bukan hanya waktu proses.
+- Kolom yang relevan untuk laporan: `modularity`, `conductance_mean`, `density`, `avg_degree`, `num_suspicious_clusters`, `num_suspicious_users`, `suspicious_user_ratio`, `avg_cluster_density`, `avg_content_repetition`, `avg_temporal_burst`, dan `avg_high_frequency`.
+- `modularity` yang lebih tinggi menunjukkan pemisahan komunitas yang lebih jelas.
+- `conductance_mean` yang lebih rendah menunjukkan cluster lebih terisolasi dari bagian graf lain.
+- `suspicious_user_ratio` membantu menjelaskan seberapa besar proporsi akun yang dianggap terkoordinasi.
+- `avg_content_repetition`, `avg_temporal_burst`, dan `avg_high_frequency` menjelaskan mengapa suatu cluster diberi label mencurigakan.
+
+Contoh interpretasi untuk laporan:
+- Jika ukuran data meningkat dan `modularity` tetap stabil atau naik, maka graf yang dibentuk tetap mampu mempertahankan struktur komunitas.
+- Jika `conductance_mean` menurun, maka cluster hasil MST semakin terpisah dengan baik.
+- Jika `num_suspicious_clusters` dan `suspicious_user_ratio` meningkat bersamaan dengan `avg_content_repetition` dan `avg_temporal_burst`, maka ada indikasi koordinasi yang semakin kuat pada data yang lebih besar.

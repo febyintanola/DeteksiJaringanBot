@@ -3,29 +3,333 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bot Network Detector (TikTok)</title>
+  <title>Deteksi Jaringan Bot TikTok</title>
   <link rel="stylesheet" href="/static/styles.css" />
   <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
-  <script src="https://unpkg.com/driver.js/dist/driver.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/driver.js/dist/driver.min.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Deteksi Jaringan Bot (TikTok)</h1>
-    <p class="subtitle">Tempelkan URL video TikTok, atur batas komentar (opsional), lalu klik Analisis.</p>
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <div class="sidebar-stack">
+        <button type="button" class="brand-mark compact-brand" aria-label="Deteksi Jaringan Bot TikTok">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <rect x="10" y="14" width="28" height="20" rx="7"></rect>
+            <circle cx="19" cy="24" r="2.4" fill="currentColor"></circle>
+            <circle cx="29" cy="24" r="2.4" fill="currentColor"></circle>
+            <rect x="20" y="29" width="8" height="2.8" rx="1.4" fill="currentColor"></rect>
+            <rect x="22.5" y="8" width="3" height="7" rx="1.5"></rect>
+            <rect x="6" y="20" width="4" height="8" rx="2"></rect>
+            <rect x="38" y="20" width="4" height="8" rx="2"></rect>
+          </svg>
+        </button>
 
-    <form id="run-form">
-      <input id="url" type="url" placeholder="https://www.tiktok.com/@user/video/123..." aria-label="URL Video TikTok" required />
-      <input id="max_comments" type="number" min="10" max="10000" value="200" aria-label="Batas komentar" title="Batas komentar yang diambil" style="max-width:140px" />
-      <button type="submit">Analisis</button>
-    </form>
-    <p class="helper">Contoh: https://www.tiktok.com/@akun/video/1234567890 • Batas komentar default 200</p>
+        <nav class="sidebar-nav" aria-label="Navigasi dashboard">
+          <button type="button" class="nav-item is-active" data-scroll-target="analysis-section">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 4h7v7H4z"></path>
+                <path d="M13 4h7v7h-7z"></path>
+                <path d="M4 13h7v7H4z"></path>
+                <path d="M13 13h7v7h-7z"></path>
+              </svg>
+            </span>
+            <span>Dashboard</span>
+          </button>
 
-    <div id="results">
-      <div id="metrics"></div>
-      <div id="graph" class="panel"></div>
-      <div id="table" class="panel"></div>
-    </div>
+          <button type="button" class="nav-item" data-scroll-target="analysis-section">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 4v16"></path>
+                <path d="M4 12h16"></path>
+              </svg>
+            </span>
+            <span>Analisis Baru</span>
+          </button>
+
+          <button type="button" class="nav-item" data-scroll-target="cluster-section">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8"></circle>
+                <path d="M12 8v4l3 2"></path>
+              </svg>
+            </span>
+            <span>Riwayat Analisis</span>
+          </button>
+
+          <button type="button" class="nav-item" data-scroll-target="graph-section">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="6" cy="12" r="2"></circle>
+                <circle cx="18" cy="6" r="2"></circle>
+                <circle cx="18" cy="18" r="2"></circle>
+                <path d="M8 11l8-4"></path>
+                <path d="M8 13l8 4"></path>
+              </svg>
+            </span>
+            <span>Hasil Cluster</span>
+          </button>
+
+          <button type="button" class="nav-item" data-scroll-target="account-section">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 21c4.4 0 8-3.6 8-8V6l-8-3-8 3v7c0 4.4 3.6 8 8 8z"></path>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+            </span>
+            <span>Akun Suspicious</span>
+          </button>
+
+          <button type="button" class="nav-item" data-scroll-target="process-section">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.55V22a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.64 8.4a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.03-1.55V2a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.06 3.64a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V8c0 .7.42 1.34 1.08 1.62.16.07.32.1.49.1H21a2 2 0 1 1 0 4h-.09c-.17 0-.33.03-.49.1A1.7 1.7 0 0 0 19.4 15z"></path>
+              </svg>
+            </span>
+            <span>Pengaturan</span>
+          </button>
+        </nav>
+      </div>
+
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="topbar">
+        <div class="topbar-brand">
+          <div class="brand-mark">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <rect x="10" y="14" width="28" height="20" rx="7"></rect>
+              <circle cx="19" cy="24" r="2.4" fill="currentColor"></circle>
+              <circle cx="29" cy="24" r="2.4" fill="currentColor"></circle>
+              <rect x="20" y="29" width="8" height="2.8" rx="1.4" fill="currentColor"></rect>
+              <rect x="22.5" y="8" width="3" height="7" rx="1.5"></rect>
+              <rect x="6" y="20" width="4" height="8" rx="2"></rect>
+              <rect x="38" y="20" width="4" height="8" rx="2"></rect>
+            </svg>
+          </div>
+
+          <div>
+            <h1>Deteksi Jaringan Bot TikTok</h1>
+            <p>Analisis pola koordinasi komentar berbasis graf</p>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button type="button" id="history-toggle" class="ghost-button">
+            <span class="button-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8"></circle>
+                <path d="M12 8v4l3 2"></path>
+                <path d="M4 4v4h4"></path>
+              </svg>
+            </span>
+            <span>Riwayat Analisis</span>
+          </button>
+
+          <button type="button" id="export-csv-button" class="ghost-button" disabled>
+            <span class="button-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3v11"></path>
+                <path d="m8 10 4 4 4-4"></path>
+                <path d="M5 19h14"></path>
+              </svg>
+            </span>
+            <span>Export CSV</span>
+          </button>
+
+          <button type="button" class="avatar-button" aria-label="Profil analis">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"></path>
+              <path d="M4.5 20a7.5 7.5 0 0 1 15 0"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <section id="analysis-section" class="panel analysis-panel">
+        <div class="panel-head">
+          <div>
+            <h2>Analisis Baru</h2>
+            <p>Masukkan URL video TikTok untuk memulai analisis komentar dan mendeteksi pola jaringan bot.</p>
+          </div>
+        </div>
+
+        <form id="run-form" class="analysis-form">
+          <label class="field field-wide">
+            <span>URL Video TikTok</span>
+            <div class="input-shell">
+              <span class="input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M10.5 13.5 13.5 10.5"></path>
+                  <path d="M7 17a4 4 0 0 1 0-5.66l2.34-2.34a4 4 0 0 1 5.66 0"></path>
+                  <path d="M17 7a4 4 0 0 1 0 5.66l-2.34 2.34a4 4 0 0 1-5.66 0"></path>
+                </svg>
+              </span>
+              <input id="url" type="url" placeholder="https://www.tiktok.com/@username/video/1234567890" aria-label="URL Video TikTok" required />
+            </div>
+          </label>
+
+          <label class="field field-small">
+            <span>Max Comments</span>
+            <input id="max_comments" type="number" min="10" max="10000" value="1000" aria-label="Jumlah komentar maksimum" />
+          </label>
+
+          <label class="field field-medium">
+            <span>Mode Analisis</span>
+            <select id="analysis_mode" aria-label="Mode analisis">
+              <option value="pipeline">Pipeline (Canopy &rarr; MST &rarr; Scoring)</option>
+            </select>
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" id="submit-button" class="primary-button">
+              <span class="button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="m8 5 10 7-10 7z"></path>
+                </svg>
+              </span>
+              <span>Mulai Analisis</span>
+            </button>
+
+            <button type="button" id="reset-button" class="ghost-button subtle-button">
+              <span class="button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 11a8 8 0 1 1-2.34-5.66"></path>
+                  <path d="M20 4v6h-6"></path>
+                </svg>
+              </span>
+              <span>Reset</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="analysis-meta">
+          <span>Hanya memproses komentar publik</span>
+          <span>Hasil berupa indikasi awal, bukan vonis final</span>
+        </div>
+
+        <div id="status-banner" class="status-banner is-hidden" aria-live="polite"></div>
+      </section>
+
+      <section id="metrics" class="metric-grid" aria-live="polite"></section>
+
+      <div class="board-grid">
+        <section id="graph-section" class="panel graph-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Graf Interaksi Akun</h2>
+              <p>Setiap node adalah akun, edge adalah interaksi reply, mention, co-thread, dan kemiripan konten.</p>
+            </div>
+
+            <div class="panel-actions">
+              <select id="cluster-filter" class="select-input" aria-label="Filter cluster">
+                <option value="all">Semua Cluster</option>
+              </select>
+
+              <label class="checkbox-toggle" for="suspicious-only">
+                <input id="suspicious-only" type="checkbox" />
+                <span>Tampilkan Suspicious Only</span>
+              </label>
+
+              <div class="graph-toolbar" aria-label="Kontrol graf">
+                <button type="button" class="icon-button" data-graph-action="zoom-in" aria-label="Perbesar graf">+</button>
+                <button type="button" class="icon-button" data-graph-action="zoom-out" aria-label="Perkecil graf">&minus;</button>
+                <button type="button" class="icon-button icon-button-wide" data-graph-action="fit" aria-label="Sesuaikan tampilan graf">Fit</button>
+                <button type="button" class="icon-button icon-button-wide" data-graph-action="relayout" aria-label="Susun ulang graf">Ulang</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="graph" class="graph-surface">
+            <div class="placeholder large">Graf akan tampil di sini setelah analisis dijalankan.</div>
+          </div>
+
+          <div id="graph-legend" class="graph-legend"></div>
+          <p class="panel-footnote">Warna node menunjukkan cluster, ukuran node menunjukkan suspicious score, dan border merah menandai akun suspicious. Klik node untuk melihat detailnya.</p>
+        </section>
+
+        <section id="cluster-section" class="panel cluster-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Daftar Cluster Terduga</h2>
+              <p>Cluster diurutkan berdasarkan skor indikasi dan kepadatan pola interaksi.</p>
+            </div>
+            <button type="button" id="toggle-clusters" class="text-button">Lihat Semua</button>
+          </div>
+
+          <div id="cluster-table" class="table-shell"></div>
+        </section>
+
+        <aside class="panel detail-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Detail Cluster</h2>
+              <p>Ringkasan pola utama, akun penting, dan sampel komentar.</p>
+            </div>
+          </div>
+
+          <div id="cluster-detail" class="detail-shell"></div>
+        </aside>
+      </div>
+
+      <div class="bottom-grid">
+        <section id="account-section" class="panel accounts-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Akun Terindikasi Mencurigakan</h2>
+              <p>Daftar akun dengan sinyal koordinasi paling kuat dari hasil analisis terbaru.</p>
+            </div>
+            <button type="button" id="toggle-accounts" class="text-button">Lihat Semua Akun</button>
+          </div>
+
+          <div id="account-table" class="table-shell"></div>
+        </section>
+
+        <section id="process-section" class="panel process-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Metrik Proses</h2>
+              <p>Durasi setiap tahap pipeline dan proporsinya terhadap total waktu proses.</p>
+            </div>
+            <span id="process-summary" class="process-summary">Siap dianalisis</span>
+          </div>
+
+          <div id="process-metrics" class="process-list"></div>
+        </section>
+      </div>
+
+      <footer class="app-footer" aria-label="Tentang aplikasi">
+        <div class="app-footer-copy">
+          <strong>Deteksi Jaringan Bot TikTok</strong>
+          <p>
+            Membantu mengidentifikasi indikasi jaringan bot yang bergerak
+            terkoordinasi pada komentar TikTok melalui analisis graf,
+            clustering, dan scoring.
+          </p>
+        </div>
+
+        <div class="app-footer-meta" aria-label="Ringkasan aplikasi">
+          <span>Analisis graf</span>
+          <span>Cluster terduga</span>
+          <span>Versi 2.0.0</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div id="history-drawer" class="drawer" hidden>
+    <div class="drawer-backdrop" data-close-drawer></div>
+    <aside class="drawer-panel" aria-label="Riwayat analisis">
+      <div class="drawer-head">
+        <div>
+          <h2>Riwayat Analisis</h2>
+          <p>Disimpan lokal di browser ini untuk memudahkan pengulangan analisis.</p>
+        </div>
+        <button type="button" class="icon-button" data-close-drawer aria-label="Tutup panel riwayat">×</button>
+      </div>
+
+      <div id="history-list" class="history-list"></div>
+    </aside>
   </div>
 
   <script src="/static/app.js"></script>

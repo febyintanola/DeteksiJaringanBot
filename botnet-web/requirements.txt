@@ -2,8 +2,8 @@ fastapi==0.115.0
 uvicorn[standard]==0.30.6
 networkx==3.2.1
 loguru==0.7.2
-numpy==1.26.4
-scipy==1.13.1
-scikit-learn==1.5.2
-hnswlib==0.8.0
+numpy>=2.0.0
+scipy>=1.15.0
+scikit-learn>=1.6.0
 # TikTokApi is consumed from local repo path via sys.path in code
+

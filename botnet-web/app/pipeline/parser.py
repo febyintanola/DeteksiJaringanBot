@@ -6,6 +6,8 @@ import re
 from collections import defaultdict
 from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
 
+from .text_features import collect_comment_text_fragments
+
 MENTION_RE = re.compile(r"@([A-Za-z0-9_\.]+)")
 _NEW_ACCOUNT_KEYWORDS = ("new", "baru", "recent", "fresh")
 
@@ -101,7 +103,8 @@ def parse_comments(comments: List[Dict[str, Any]]) -> Dict[str, Any]:
         summary["comment_count"] += 1
         summary["total_likes"] += int(comment.get("likes") or 0)
         text = comment.get("text") or ""
-        summary["_texts"].append(text)
+        raw = comment.get("raw") or {}
+        summary["_texts"].extend(collect_comment_text_fragments(comment, raw))
         timestamp = comment.get("timestamp")
         if timestamp is not None:
             summary["timestamps"].append(timestamp)
@@ -109,7 +112,6 @@ def parse_comments(comments: List[Dict[str, Any]]) -> Dict[str, Any]:
                 summary["first_timestamp"] = timestamp
             if summary["last_timestamp"] is None or timestamp > summary["last_timestamp"]:
                 summary["last_timestamp"] = timestamp
-        raw = comment.get("raw") or {}
         raw_user = raw.get("user") or {}
         new_account_signal, has_profile_metadata = _extract_new_account_signal(raw_user)
         if has_profile_metadata:

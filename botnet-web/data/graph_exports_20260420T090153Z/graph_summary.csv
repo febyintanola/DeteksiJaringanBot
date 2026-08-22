@@ -1,0 +1,5 @@
+requested_comments,n_comments,n_nodes,n_edges,n_components,largest_component_size,isolated_nodes,n_canopies,canopy_t1,canopy_t2,used_canopy_overlay
+100,100,98,1069,1,98,0,75,0.6,0.8,True
+200,200,194,2189,1,194,0,154,0.6,0.8,True
+500,500,481,5767,1,481,0,379,0.65,0.8,True
+1000,1000,954,11920,1,954,0,722,0.65,0.7,True

@@ -1,0 +1,130 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class FrontendUI {
+  +inputUrl: String
+  +maxComments: int
+  +submitAnalysis()
+  +pollStatus()
+  +renderGraph()
+  +renderClusterTable()
+  +exportCSV()
+}
+
+class BackendAPI {
+  +runAsync(url: String, maxComments: int): JobResponse
+  +getStatus(jobId: String): RunResult
+  +orchestratePipeline()
+}
+
+class TikTokClient {
+  +fetchComments(url: String, maxComments: int): List<Comment>
+  +saveRawSnapshot(comments: List<Comment>)
+}
+
+class CommentParser {
+  +parseComments(comments: List<Comment>): ParsedData
+  +extractMentions()
+  +extractReplies()
+  +aggregateUserTexts()
+}
+
+class CanopyClusterer {
+  +buildCanopies(userTexts: Map<String,String>): CanopyArtifacts
+  +vectorizeTFIDF()
+  +reduceDimension()
+  +runHNSW()
+}
+
+class GraphBuilder {
+  +buildGraph(parsed: ParsedData, canopies: CanopyArtifacts): GraphData
+  +computeEdgeWeights()
+  +pruneKNN()
+}
+
+class KruskalMST {
+  +buildMST(graph: GraphData): ClusterResult
+  +cutWeakEdges()
+}
+
+class SuspiciousScorer {
+  +scoreClusters(graph: GraphData, clusters: ClusterResult): ScoreResult
+  +computeDensity()
+  +computeContentRepetition()
+  +computeTemporalBurst()
+  +computeHighFrequency()
+  +computeAccountAge()
+}
+
+class RunResult {
+  +nodes
+  +edges
+  +clusters
+  +canopies
+  +suspicious
+  +metrics
+  +timings
+}
+
+class Comment {
+  +commentId: String
+  +userId: String
+  +username: String
+  +text: String
+  +timestamp: DateTime
+  +likes: int
+}
+
+class ParsedData {
+  +userSummary
+  +mentionEdges
+  +replyEdges
+  +coThreadEdges
+  +userTexts
+}
+
+class CanopyArtifacts {
+  +assignments
+  +canopies
+  +embeddings
+}
+
+class GraphData {
+  +nodes
+  +edges
+}
+
+class ClusterResult {
+  +clusters
+}
+
+class ScoreResult {
+  +suspicious
+  +clusterStats
+  +nodeScores
+}
+
+FrontendUI --> BackendAPI : request analysis
+BackendAPI --> TikTokClient : fetch comments
+BackendAPI --> CommentParser : parse comments
+BackendAPI --> CanopyClusterer : build canopies
+BackendAPI --> GraphBuilder : build graph
+BackendAPI --> KruskalMST : cluster graph
+BackendAPI --> SuspiciousScorer : score suspiciousness
+BackendAPI --> RunResult : compose result
+
+TikTokClient --> Comment : produces
+CommentParser --> ParsedData : produces
+CanopyClusterer --> CanopyArtifacts : produces
+GraphBuilder --> GraphData : produces
+KruskalMST --> ClusterResult : produces
+SuspiciousScorer --> ScoreResult : produces
+
+CommentParser ..> Comment
+CanopyClusterer ..> ParsedData
+GraphBuilder ..> ParsedData
+GraphBuilder ..> CanopyArtifacts
+KruskalMST ..> GraphData
+SuspiciousScorer ..> GraphData
+SuspiciousScorer ..> ClusterResult
+@enduml
